@@ -32,6 +32,22 @@ import Pdf from 'react-to-pdf'
 
 const Index = () => {
   const transactionKeyword = "dmt"
+  useEffect(() => {
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if(res.data[0].allowed_pages.includes('dmtReport') == false){
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
+
   const Toast = useToast({
     position: 'top-right'
   })

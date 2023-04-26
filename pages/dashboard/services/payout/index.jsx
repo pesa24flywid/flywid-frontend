@@ -44,6 +44,35 @@ const Payout = () => {
     const Toast = useToast()
     const [isLoading, setIsLoading] = useState(false)
 
+    useEffect(() => {
+        ClientAxios.post('/api/user/fetch', {
+          user_id: localStorage.getItem('userId')
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then((res) => {
+          if (res.data[0].allowed_pages.includes('payoutTransaction') == false) {
+            window.location.assign('/dashboard/not-allowed')
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
+    
+        // ClientAxios.get(`/api/global`).then(res => {
+        //   setAepsProvider(res.data[0].aeps_provider)
+        //   if (!res.data[0].aeps_status) {
+        //     window.location.href('/dashboard/not-available')
+        //   }
+        // }).catch(err => {
+        //   Toast({
+        //     title: 'Try again later',
+        //     description: 'We are facing some issues.'
+        //   })
+        // })
+    
+      }, [])
+
     const Formik = useFormik({
         initialValues: {
             beneficiaryName: "",

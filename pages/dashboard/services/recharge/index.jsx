@@ -59,22 +59,22 @@ import Pdf from 'react-to-pdf'
 
 const Bbps = () => {
 
-  // useEffect(() => {
+  useEffect(() => {
 
-  //   ClientAxios.post('/api/user/fetch', {
-  //     user_id: localStorage.getItem('userId')
-  //   }, {
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   }).then((res) => {
-  //     if(res.data[0].allowed_pages.includes('rechargeTransaction') == false){
-  //       window.location.assign('/dashboard/not-allowed')
-  //     }
-  //   }).catch((err) => {
-  //     console.log(err)
-  //   })
-  // }, [])
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      if(res.data[0].allowed_pages.includes('rechargeTransaction') == false){
+        window.location.assign('/dashboard/not-allowed')
+      }
+    }).catch((err) => {
+      console.log(err)
+    })
+  }, [])
 
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [keyword, setKeyword] = useState("")

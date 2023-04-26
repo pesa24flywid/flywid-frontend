@@ -46,7 +46,7 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
+      if (res.data[0].allowed_pages.includes('aadhaarPay') == false) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
