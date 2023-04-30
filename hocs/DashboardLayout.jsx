@@ -152,7 +152,7 @@ const DashboardWrapper = (props) => {
 
     return (
         <>
-            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Flywid - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}
@@ -260,7 +260,7 @@ const DashboardWrapper = (props) => {
                     <DrawerContent>
                         <DrawerCloseButton />
                         <DrawerHeader>
-                            <Text fontWeight={'semibold'}>Pesa24</Text>
+                            <Text fontWeight={'semibold'}>Flywid</Text>
                         </DrawerHeader>
 
                         <DrawerBody mt={8}>
