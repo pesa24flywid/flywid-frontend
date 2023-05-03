@@ -24,9 +24,9 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { Formik, useFormik } from "formik";
-import DashboardWrapper from "../../../hocs/DashboardLayout";
-import BackendAxios, { FormAxios, DefaultAxios } from "../../../lib/axios";
-import { states } from '../../../lib/states'
+import DashboardWrapper from "./hocs/DashboardLayout";
+import BackendAxios, { FormAxios, DefaultAxios } from "./lib/axios";
+import { states } from './lib/states'
 import { IoMdFingerPrint } from "react-icons/io";
 const EditProfile = () => {
   const date = new Date()
