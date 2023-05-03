@@ -273,7 +273,7 @@ const Login = () => {
     return (
         <>
             <Head>
-                <title>Pesa24 - Login</title>
+                <title>Flywid - Login</title>
             </Head>
             <Navbar />
             <Box>
