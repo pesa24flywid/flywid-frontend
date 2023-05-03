@@ -64,17 +64,17 @@ const DashboardWrapper = (props) => {
     }, [])
 
     // Check if user has paid onboarding fee or not
-    useEffect(() => {
-        BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
-            if (res.data[0].onboard_fee == 0) {
-                if (!window.location.href.includes(`/services/activate`)) {
-                    if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
-                        window.location.assign('/dashboard/services/activate?pageId=services')
-                    }
-                }
-            }
-        })
-    }, [])
+    // useEffect(() => {
+    //     BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
+    //         if (res.data[0].onboard_fee == 0) {
+    //             if (!window.location.href.includes(`/services/activate`)) {
+    //                 if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
+    //                     window.location.assign('/dashboard/services/activate?pageId=services')
+    //                 }
+    //             }
+    //         }
+    //     })
+    // }, [])
 
 
     const [openNotification, setOpenNotification] = useState(false)
@@ -141,21 +141,18 @@ const DashboardWrapper = (props) => {
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
     })
-    async function signout() {
-        await BackendAxios.post("/logout").then(() => {
-            Cookies.remove("verified")
-            Cookies.remove("access_token")
-            Cookies.remove("XSRF-TOKEN")
-            Cookies.remove("laravel_session")
-            Cookies.remove("latlong")
-            localStorage.clear()
-        })
-        setTimeout(() => Router.push("/auth/login"), 2000)
-    }
+    
+    
+  async function signout() {
+    await BackendAxios.post("/logout").then(() => {
+      Cookies.remove("verified")
+    })
+    Router.push("/auth/login")
+  }
 
     return (
         <>
-            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Flywid - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}
@@ -263,7 +260,7 @@ const DashboardWrapper = (props) => {
                     <DrawerContent>
                         <DrawerCloseButton />
                         <DrawerHeader>
-                            <Text fontWeight={'semibold'}>Pesa24</Text>
+                            <Text fontWeight={'semibold'}>Flywid</Text>
                         </DrawerHeader>
 
                         <DrawerBody mt={8}>
