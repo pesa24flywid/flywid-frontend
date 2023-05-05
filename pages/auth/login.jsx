@@ -229,7 +229,7 @@ const Login = () => {
             await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 authMethod: authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
-                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
                 password: formik.values.password,
                 mpin: mpin,
                 organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
