@@ -63,7 +63,7 @@ const Dmt = () => {
         ClientAxios.get(`/api/global`).then(res => {
             setDmtProvider(res.data[0].dmt_provider)
             if (res.data[0].dmt_status == false) {
-                window.location.href('/dashboard/not-available')
+                window.location.assign('/dashboard/not-available')
             }
         }).catch(err => {
             if (err.status > 400) {

@@ -55,8 +55,8 @@ const Aeps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setAepsProvider(res.data[0].aeps_provider)
-      if (!res.data[0].aeps_status) {
-        window.location.href('/dashboard/not-available')
+      if (res.data[0].aeps_status == false) {
+        window.location.assign('/dashboard/not-available')
       }
     }).catch(err => {
       Toast({

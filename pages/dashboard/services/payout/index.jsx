@@ -59,17 +59,17 @@ const Payout = () => {
           console.log(err)
         })
     
-        // ClientAxios.get(`/api/global`).then(res => {
+        ClientAxios.get(`/api/global`).then(res => {
         //   setAepsProvider(res.data[0].aeps_provider)
-        //   if (!res.data[0].aeps_status) {
-        //     window.location.href('/dashboard/not-available')
-        //   }
-        // }).catch(err => {
-        //   Toast({
-        //     title: 'Try again later',
-        //     description: 'We are facing some issues.'
-        //   })
-        // })
+          if (res.data[0].payout_status == false) {
+            window.location.assign('/dashboard/not-available')
+          }
+        }).catch(err => {
+          Toast({
+            title: 'Try again later',
+            description: 'We are facing some issues.'
+          })
+        })
     
       }, [])
 

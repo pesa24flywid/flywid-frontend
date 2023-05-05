@@ -74,6 +74,19 @@ const Bbps = () => {
     }).catch((err) => {
       console.log(err)
     })
+
+    ClientAxios.get(`/api/global`).then(res => {
+      //   setAepsProvider(res.data[0].aeps_provider)
+        if (res.data[0].recharge_status == false) {
+          window.location.assign('/dashboard/not-available')
+        }
+      }).catch(err => {
+        Toast({
+          title: 'Try again later',
+          description: 'We are facing some issues.'
+        })
+      })
+
   }, [])
 
   const { isOpen, onOpen, onClose } = useDisclosure()
