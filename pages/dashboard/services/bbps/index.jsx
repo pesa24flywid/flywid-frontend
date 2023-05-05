@@ -57,7 +57,6 @@ const Bbps = () => {
   const Toast = useToast({ position: 'top-right' })
   const { isOpen, onOpen, onClose } = useDisclosure()
   useEffect(() => {
-
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -74,10 +73,11 @@ const Bbps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setBbpsProvider(res.data[0].bbps_provider)
-      if (!res.data[0].bbps_status) {
-        window.location.href('/dashboard/not-available')
+      if (res.data[0].bbps_status === false) {
+        window.location.assign('/dashboard/not-available')
       }
     }).catch(err => {
+      console.log(err)
       Toast({
         title: 'Try again later',
         description: 'We are facing some issues.'
