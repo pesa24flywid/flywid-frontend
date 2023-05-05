@@ -87,7 +87,7 @@ const Profile = () => {
   return (
     <>
       <Head>
-        <title>Pesa24 - Profile</title>
+        <title>Flywid - Profile</title>
       </Head>
 
       <DashboardWrapper titleText='Your Profile'>

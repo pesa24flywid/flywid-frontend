@@ -42,12 +42,12 @@ const ProfileInfoCard = ({
             alignItems={"center"}
           >
             <Heading size="md">Personal Info</Heading>
-            <Link href={"/dashboard/profile/edit?pageId=profile"}>
+            {/* <Link href={"/dashboard/profile/edit?pageId=profile"}>
               <Button colorScheme="red" variant="solid">
                 <Icon as={MdEdit} color={"white"} mr={"2"} />
                 Edit Info
               </Button>
-            </Link>
+            </Link> */}
           </CardHeader>
 
           <CardBody>
