@@ -1,6 +1,6 @@
 [{
         "relation": ["delegate_permission/common.handle_all_urls"],
         "target" : { "namespace": "android_app", "package_name": "in.flywid.flywid",
-                     "sha256_cert_fingerprints": ["7C:D4:5F:6E:DA:07:2B:3D:D8:82:2E:40:CC:AB:BB:97:FC:81:F5:C9:02:A3:44:A4:4C:21:54:EC:76:65:55:65"] }
+                     "sha256_cert_fingerprints": ["BE:CB:8E:12:8D:86:23:D3:CC:5B:D3:70:2D:23:0D:81:09:12:5D:38:7B:AD:B4:59:09:F1:2C:DD:4C:E9:F4:E4"] }
       }
 ]
