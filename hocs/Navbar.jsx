@@ -37,7 +37,7 @@ const Navbar = () => {
                 backdropBlur={'5px'} color={'white'}
             >
                 <HStack justifyContent={'space-between'}>
-                    <Text fontSize={'xl'} fontWeight={'bold'}>PESA24</Text>
+                    <Text fontSize={'xl'} fontWeight={'bold'}>Flywid</Text>
                     <Show above={'md'}>
                         <HStack w={'full'}>
                             <Spacer />
