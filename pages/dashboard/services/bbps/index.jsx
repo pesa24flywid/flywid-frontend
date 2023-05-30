@@ -6,6 +6,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Image,
   PinInput,
   PinInputField,
   Select,
@@ -53,10 +54,11 @@ import Pdf from 'react-to-pdf'
 
 
 const Bbps = () => {
-  const [bbpsProvider, setBbpsProvider] = useState("paysprint")
+  const [bbpsProvider, setBbpsProvider] = useState("")
   const Toast = useToast({ position: 'top-right' })
   const { isOpen, onOpen, onClose } = useDisclosure()
   useEffect(() => {
+
     ClientAxios.post('/api/user/fetch', {
       user_id: localStorage.getItem('userId')
     }, {
@@ -73,15 +75,19 @@ const Bbps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setBbpsProvider(res.data[0].bbps_provider)
-      if (res.data[0].bbps_status === false) {
-        window.location.assign('/dashboard/not-available')
+      if (!res.data[0].bbps_status) {
+        window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
       console.log(err)
-      Toast({
-        title: 'Try again later',
-        description: 'We are facing some issues.'
-      })
+    })
+
+    ClientAxios.get(`/api/organisation`).then(res => {
+      if (!res.data[0].bbps_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      console.log(err)
     })
   }, [])
 
@@ -109,10 +115,15 @@ const Bbps = () => {
   // Fetch all available categories
   useEffect(() => {
     if (bbpsProvider == "eko") {
-      BackendAxios.get(`api/${bbpsProvider}/bbps/operators/categories`).then((res) => {
+      BackendAxios.get(`api/eko/bbps/operators/categories`).then((res) => {
         setCategories(res.data.data)
       }).catch((err) => {
         console.log(err)
+        Toast({
+          status: 'warning',
+          title: "Error while fetching operators",
+          description: err.response?.data?.message || err.response.data || err.message
+        })
       })
     }
     if (bbpsProvider == "paysprint") {
@@ -134,7 +145,7 @@ const Bbps = () => {
         })
       })
     }
-  }, [])
+  }, [bbpsProvider])
 
   useEffect(() => {
     setLatlong(Cookies.get("latlong"))
@@ -176,15 +187,30 @@ const Bbps = () => {
     if (bbpsProvider == "eko") {
       FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
         formData
-      )
+      ).then(res => {
+        if (res.data.response_type_id == -1) {
+          Toast({
+            description: res.data.message || "Unable to fetch bill"
+          })
+          return
+        }
+        setFetchBillResponse(res.data.data)
+        setAmount(res.data.data.amount)
+        setFetchBillBtn(false)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          title: 'Error while fetching bill',
+          description: err.response?.data?.message || err.response?.data || err.message
+        })
+      })
     }
     if (bbpsProvider == "paysprint") {
       FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
         formData
       ).then(res => {
-        console.log(res.data)
         setFetchBillResponse(res.data)
-        if(res.data.status == false && parseInt(res.data.response_code) == 0){
+        if (res.data.status == false && parseInt(res.data.response_code) == 0) {
           Toast({
             description: res.data.message
           })
@@ -206,16 +232,51 @@ const Bbps = () => {
     e.preventDefault()
     let formData = new FormData(document.getElementById('bbpsForm'))
     if (bbpsProvider == "eko") {
-      FormAxios.post(`api/${bbpsProvider}/bbps/fetch-bill`,
-        formData
-      )
+      var object = {};
+      formData.forEach(function (value, key) {
+        object[key] = value;
+      });
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
+        {
+          ...object,
+          mpin: mpin,
+          bill: fetchBillResponse,
+          utility_acc_no: object.utility_acc_no,
+          confirmation_mobile_no: object.confirmation_mobile_no,
+          amount: amount,
+          latitude: latlong.split(",")[0],
+          longitude: latlong.split(",")[1],
+          latlong: latlong
+        }
+      ).then(res => {
+        setReceipt({
+          status: res.data.metadata?.status,
+          show: true,
+          data: res.data.metadata
+        })
+        onClose()
+      }).catch(err => {
+        if (err.response.status == 406) {
+          Toast({
+            status: 'error',
+            description: 'MPIN is incorrect'
+          })
+          return
+        }
+        setReceipt({
+          status: err.response.data?.metadata?.status,
+          show: true,
+          data: err.response.data?.metadata
+        })
+        onClose()
+      })
     }
     if (bbpsProvider == "paysprint") {
       var object = {};
       formData.forEach(function (value, key) {
         object[key] = value;
       });
-      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill`,
+      BackendAxios.post(`api/${bbpsProvider}/bbps/pay-bill/12`,
         {
           ...object,
           mpin: mpin,
@@ -226,16 +287,25 @@ const Bbps = () => {
         }
       ).then(res => {
         setReceipt({
-          status: res.data.metadata.status,
+          status: res.data.metadata?.status,
           show: true,
           data: res.data.metadata
         })
         onClose()
       }).catch(err => {
-        Toast({
-          status: 'error',
-          description: err.response.data.message || err.response.data || err.message0
+        if (err.response.status == 406) {
+          Toast({
+            status: 'error',
+            description: 'MPIN is incorrect'
+          })
+          return
+        }
+        setReceipt({
+          status: err.response.data?.metadata?.status,
+          show: true,
+          data: err.response.data?.metadata
         })
+        onClose()
       })
     }
   }
@@ -503,27 +573,56 @@ const Bbps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {bbpsProvider == "paysprint" ? receipt.data.amount : receipt.data.amount}</Text>
+                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text
-                          fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} maxW={'full'} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "user" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "amount"
+                      )
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                          >
+                            <Text
+                              fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+
+                    }
+                    ) : null
                 }
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

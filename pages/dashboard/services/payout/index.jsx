@@ -45,33 +45,14 @@ const Payout = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        ClientAxios.post('/api/user/fetch', {
-          user_id: localStorage.getItem('userId')
-        }, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then((res) => {
-          if (res.data[0].allowed_pages.includes('payoutTransaction') == false) {
-            window.location.assign('/dashboard/not-allowed')
-          }
-        }).catch((err) => {
-          console.log(err)
-        })
-    
-        ClientAxios.get(`/api/global`).then(res => {
-        //   setAepsProvider(res.data[0].aeps_provider)
-          if (res.data[0].payout_status == false) {
-            window.location.assign('/dashboard/not-available')
-          }
+        ClientAxios.get(`/api/organisation`).then(res => {
+            if (!res.data[0].payout_status) {
+                window.location.href('/dashboard/not-available')
+            }
         }).catch(err => {
-          Toast({
-            title: 'Try again later',
-            description: 'We are facing some issues.'
-          })
+            console.log(err)
         })
-    
-      }, [])
+    }, [])
 
     const Formik = useFormik({
         initialValues: {
@@ -109,7 +90,7 @@ const Payout = () => {
             Toast({
                 status: 'error',
                 title: 'Transaction Failed',
-                description: err.message,
+                description: err.response.data.message || err.response.data || err.message,
                 position: 'top-right'
             })
             setIsLoading(false)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { BsWallet, BsBell, BsPeopleFill } from 'react-icons/bs'
+import { BsWallet, BsBell, BsPeopleFill, BsFillFileEarmarkBarGraphFill, BsFileEarmarkBarGraphFill, BsHouseDoorFill } from 'react-icons/bs'
 import { FiMenu } from 'react-icons/fi'
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
@@ -34,19 +34,12 @@ import { useRouter } from 'next/router';
 import BackendAxios, { ClientAxios } from '../lib/axios';
 import Topbar from './Topbar';
 import SimpleAccordion from './SimpleAccordion';
+import { FaUserAlt } from 'react-icons/fa';
+import { MdContactSupport } from 'react-icons/md'
 
 
 const DashboardWrapper = (props) => {
     const [availablePages, setAvailablePages] = useState([])
-    const foreverAllowedPages = [
-        'view-profile',
-        'edit-profile',
-        'reset-mpin',
-        'reset-password',
-        'activate',
-        'request',
-        'support',
-    ]
 
     useEffect(() => {
         ClientAxios.post('/api/user/fetch', {
@@ -56,25 +49,11 @@ const DashboardWrapper = (props) => {
                 'Content-Type': 'application/json'
             }
         }).then((res) => {
-            foreverAllowedPages.concat(res.data[0].allowed_pages)
-            setAvailablePages(foreverAllowedPages.concat(res.data[0].allowed_pages))
+            setAvailablePages(res.data[0].allowed_pages)
         }).catch((err) => {
             console.log(err)
         })
     }, [])
-
-    // Check if user has paid onboarding fee or not
-    // useEffect(() => {
-    //     BackendAxios.get('/api/user/check/onboard-fee').then((res) => {
-    //         if (res.data[0].onboard_fee == 0) {
-    //             if (!window.location.href.includes(`/services/activate`)) {
-    //                 if (!window.location.href.includes(`/fund-request`) && !window.location.href.includes(`/support-tickets`) && !window.location.href.includes(`/profile`)) {
-    //                     window.location.assign('/dashboard/services/activate?pageId=services')
-    //                 }
-    //             }
-    //         }
-    //     })
-    // }, [])
 
 
     const [openNotification, setOpenNotification] = useState(false)
@@ -86,7 +65,7 @@ const DashboardWrapper = (props) => {
     const [isProfileComplete, setIsProfileComplete] = useState(false)
     const [userName, setUserName] = useState("No Name")
     const [userType, setUserType] = useState("Undefined")
-    const [userImage, setUserImage] = useState("/avatar.png")
+    const [profilePic, setProfilePic] = useState("/avatar.png")
     const [wallet, setWallet] = useState("0")
     const { isOpen, onOpen, onClose } = useDisclosure()
     var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
@@ -96,14 +75,8 @@ const DashboardWrapper = (props) => {
         setIsProfileComplete(localStorage.getItem("isProfileComplete") === "true")
         setUserName(localStorage.getItem("userName"))
         setUserType(localStorage.getItem("userType"))
+        setProfilePic(localStorage.getItem("profilePic"))
         Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
-
-        // Check wallet balance
-        BackendAxios.post('/api/user/wallet').then((res) => {
-            setWallet(res.data[0].wallet)
-        }).catch((err) => {
-            setWallet('Error')
-        })
 
         // Fetch all notifications
         ClientAxios.post('/api/user/fetch', {
@@ -118,6 +91,20 @@ const DashboardWrapper = (props) => {
             console.log(err)
         })
 
+    }, [])
+
+    async function fetchWallet() {
+        // Check wallet balance
+        await BackendAxios.post('/api/user/wallet').then((res) => {
+            setWallet(res.data[0].wallet)
+        }).catch((err) => {
+            setWallet('0')
+            location.reload()
+        })
+    }
+
+    useEffect(() => {
+        fetchWallet()
     }, [])
 
 
@@ -141,14 +128,14 @@ const DashboardWrapper = (props) => {
             setTimeout(() => Router.push("/auth/login"), 2000)
         }
     })
-    
-    
-  async function signout() {
-    await BackendAxios.post("/logout").then(() => {
-      Cookies.remove("verified")
-    })
-    Router.push("/auth/login")
-  }
+
+
+    async function signout() {
+        await BackendAxios.post("/logout").then(() => {
+            Cookies.remove("verified")
+        })
+        Router.push("/auth/login")
+    }
 
     return (
         <>
@@ -164,8 +151,7 @@ const DashboardWrapper = (props) => {
                         isProfileComplete={isProfileComplete}
                         userName={userName}
                         userType={userType.toUpperCase()}
-                        userImage={userImage}
-                        availablePages={availablePages}
+                        userImage={profilePic}
                     />
 
                     {/* Main Dashboard Container */}
@@ -177,7 +163,9 @@ const DashboardWrapper = (props) => {
                         w={'full'} h={'100vh'}
                         overflowY={'scroll'}
                     >
-                        <Topbar />
+                        <Show above='md'>
+                            <Topbar />
+                        </Show>
 
                         {/* Topbar Starts */}
                         <HStack
@@ -242,11 +230,68 @@ const DashboardWrapper = (props) => {
 
                         {props.children}
 
+                        <Show below='md'>
+                            <Box w={'full'} py={64}>
+
+                            </Box>
+                        </Show>
                     </Box>
 
 
                 </HStack>
             </Box>
+
+            {/* Mobile bottom nav */}
+            <Show below='md'>
+                <HStack
+                    pos={'fixed'}
+                    bottom={0}
+                    width={'100%'}
+                    zIndex={999}
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                >
+                    <HStack
+                        width={'100%'}
+                        padding={3}
+                        boxShadow={'lg'}
+                        bg={'#FFF'}
+                        justifyContent={'space-between'}
+                        paddingX={8}
+                        border={'1px'}
+                        borderColor={'#FAFAFA'}
+                    >
+                        <Link href={'/'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <BsHouseDoorFill fontSize={'20'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Home</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/mobile/reports'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <BsFileEarmarkBarGraphFill fontSize={'20'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Reports</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/support-tickets'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <MdContactSupport fontSize={'22'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Support</Text>
+                            </VStack>
+                        </Link>
+
+                        <Link href={'/dashboard/profile'}>
+                            <VStack h={'100%'} justifyContent={'space-between'}>
+                                <FaUserAlt fontSize={'18'} />
+                                <Text fontSize={'xs'} textAlign={'center'}>Profile</Text>
+                            </VStack>
+                        </Link>
+
+                    </HStack>
+                </HStack>
+            </Show>
 
             {/* Mobile Sidebar */}
             <Show below={'md'}>
@@ -352,38 +397,45 @@ const DashboardWrapper = (props) => {
 
                                             <AccordionPanel px={0}>
 
-
                                                 <VStack
                                                     w={'full'}
                                                     alignItems={'flex-start'}
                                                     justifyContent={'flex-start'}
                                                     spacing={2}
                                                     overflow={'hidden'}
-                                                    id={'users'}
                                                 >
-                                                    <Link href={"/users/create-user?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >Create User</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementCreateUser') ?
+                                                            <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >Create User</Text>
+                                                            </Link> : null
+                                                    }
 
-                                                    <Link href={"/users/users-list?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >View User</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementUsersList') ?
+                                                            <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >View Users</Text>
+                                                            </Link> : null
+                                                    }
 
-                                                    <Link href={"/users/users-report?pageId=users"} style={{ width: '100%' }}>
-                                                        <Text
-                                                            w={'full'} textAlign={'left'}
-                                                            px={3} py={2} _hover={{ bg: 'aqua' }}
-                                                            textTransform={'capitalize'}
-                                                        >Users Report</Text>
-                                                    </Link>
+                                                    {
+                                                        availablePages.includes('userManagementUserLedger') ?
+                                                            <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
+                                                                <Text
+                                                                    w={'full'} textAlign={'left'}
+                                                                    px={3} py={2} _hover={{ bg: 'aqua' }}
+                                                                    textTransform={'capitalize'}
+                                                                >User Ledger</Text>
+                                                            </Link> : null
+                                                    }
 
                                                 </VStack>
 
@@ -404,12 +456,8 @@ const DashboardWrapper = (props) => {
                             <VStack w={'full'} spacing={8}>
                                 <HStack w={'full'} spacing={4} justifyContent={'space-between'}>
                                     <Box>
-                                        <Text fontSize={'xs'} color={'#888'}>DMT Wallet</Text>
-                                        <Text fontSize={'xl'}>₹ {props.dmt || 0}</Text>
-                                    </Box>
-                                    <Box>
-                                        <Text fontSize={'xs'} color={'#888'}>Prepaid Wallet</Text>
-                                        <Text fontSize={'xl'}>₹ {props.prepaid || 0}</Text>
+                                        <Text fontSize={'xs'} color={'#888'}>Wallet</Text>
+                                        <Text fontSize={'xl'}>₹ {wallet || 0}</Text>
                                     </Box>
                                 </HStack>
                                 <HStack spacing={2} color={'red'} onClick={() => signout()}>

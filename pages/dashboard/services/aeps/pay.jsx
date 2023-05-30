@@ -46,7 +46,7 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('aadhaarPay') == false) {
+      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
@@ -54,21 +54,29 @@ const Aeps = () => {
     })
 
     ClientAxios.get(`/api/global`).then(res => {
-      setAepsProvider(res.data[0].aeps_provider)
-      if (res.data[0].aeps_status == false) {
-        window.location.assign('/dashboard/not-available')
+      if (!res.data[0].aeps_status) {
+        window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
-      Toast({
-        title: 'Try again later',
-        description: 'We are facing some issues.'
-      })
+      console.log(err)
     })
+
+    ClientAxios.get(`/api/organisation`).then(res => {
+      if (!res.data[0].aeps_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      console.log(err)
+    })
+
 
   }, [])
 
+  const [rdserviceFound, setRdserviceFound] = useState(false)
+  const [rdservicePort, setRdservicePort] = useState(11101)
+
   let MethodInfo
-  function getMantra() {
+  function getMantra(port) {
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -92,7 +100,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + 11101,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
@@ -125,8 +133,8 @@ const Aeps = () => {
 
     if (SuccessFlag == 1) {
       //alert("RDSERVICE Discover Successfully");
-      var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="0" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
-      var finalUrl = "http://" + GetCustomDomName + ":" + 11100;
+      var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
+      var finalUrl = "http://" + GetCustomDomName + ":" + port;
       var verb = "CAPTURE";
       var err = "";
       var res;
@@ -199,7 +207,7 @@ const Aeps = () => {
     }
   }
 
-  function searchMantra() {
+  function searchMantra(port) {
 
     var GetCustomDomName = "127.0.0.1";
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -223,7 +231,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + port,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
@@ -235,6 +243,8 @@ const Aeps = () => {
         if (CmbData1 == "READY") {
           MantraFound = 1;
           setBiometricDevice("mantra")
+          setRdserviceFound(true)
+          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -243,18 +253,16 @@ const Aeps = () => {
     })
 
     if (MantraFound != 1) {
-      Toast({
-        status: "error",
-        title: "Biometric Device Not Found",
-        description: "Please connect your device and refresh this page.",
-        position: "top-right"
-      })
+      console.log('Mantra NOT Found at PORT ' + port)
     }
   }
 
   useEffect(() => {
-    searchMantra()
-  }, [])
+    if(!rdserviceFound) {
+      setRdservicePort(Number(rdservicePort) + 1)
+      searchMantra(Number(rdservicePort))
+    }
+  }, [rdserviceFound])
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
@@ -276,10 +284,11 @@ const Aeps = () => {
       setIsBtnLoading(true)
       if (aepsProvider == "paysprint") {
         await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-          Toast({
-            description: res.data[0].message,
-            position: 'top-right'
-          })
+          setIsBtnLoading(false)
+          // Toast({
+          //   description: res.data[0].message,
+          //   position: 'top-right'
+          // })
           setReceipt({
             show: true,
             status: res.data.metadata.status,
@@ -287,7 +296,9 @@ const Aeps = () => {
           })
           console.log(res.data)
         }).catch((err) => {
+          setIsBtnLoading(false)
           Toast({
+            status: 'warning',
             title: 'Transaction Failed',
             description: err.response.data.message || err.response.data || err.message,
             position: 'top-right',
@@ -305,19 +316,19 @@ const Aeps = () => {
     formik.values.serviceCode == "2" ? formik.setFieldValue("serviceId", "20") : null
   }, [formik.values.serviceCode])
 
-
   useEffect(() => {
     if (aepsProvider == "paysprint") {
-      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+      BackendAxios.get(`/api/paysprint/aeps/fetch-bank/${serviceCode}`).then(res => {
         setBanksList(res.data.banklist.data)
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.response.data.message || err.response.data || err.message
+          description: err.response?.data?.message || err.response?.data || err.message
         })
       })
     }
-  }, [])
+  }, [aepsProvider])
+
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -430,49 +441,51 @@ const Aeps = () => {
   return (
     <>
       <DashboardWrapper titleText={'AePS Transaction'}>
-        <Box my={4} w={['full', 'md', 'full']} p={6} boxShadow={'md'} bg={'white'}>
-          <FormControl w={'xs'} pb={8}>
-            <FormLabel>Select Service</FormLabel>
-            <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
-              <option value={'aadhaar-pay'}>Aadhaar Pay</option>
-            </Select>
-          </FormControl>
+        <Stack
+          direction={['column', 'column', 'row']}
+          gap={[16, 4]} alignItems={'flex-start'}
+        >
+          <Box w={['full', 'full', '2xl']} p={6} boxShadow={'md'} bg={'white'}>
+            <FormControl w={'xs'} pb={8}>
+              <FormLabel>Select Service</FormLabel>
+              <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
+                <option value={'aadhaar-pay'}>Aadhaar Pay</option>
+              </Select>
+            </FormControl>
 
-          <FormControl pb={6}>
-            <FormLabel>Choose Device</FormLabel>
-            <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
-              <Stack direction={['column', 'row']} spacing={4}>
-                <Radio value='mantra'>Mantra</Radio>
-                <Radio value='morpho'>Morpho</Radio>
-                <Radio value='secugen'>Secugen</Radio>
-                <Radio value='startek'>Startek</Radio>
-              </Stack>
-            </RadioGroup>
-          </FormControl>
+            <FormControl pb={6}>
+              <FormLabel>Choose Device</FormLabel>
+              <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
+                <Stack direction={['column', 'row']} spacing={4}>
+                  <Radio value='mantra'>Mantra</Radio>
+                  <Radio value='morpho'>Morpho</Radio>
+                  <Radio value='secugen'>Secugen</Radio>
+                  <Radio value='startek'>Startek</Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
 
-          {/* Aadhaar Pay Form */}
-          <FormControl w={'full'} pb={6}>
-            <FormLabel>Select Bank</FormLabel>
-            <Select name='bankCode'
-              value={formik.values.bankCode}
-              onChange={formik.handleChange} w={'xs'}
-            >
-            {
-              aepsProvider == "eko" &&
-              banksList.map((bank, key) => (
-                aepsProvider == "paysprint" &&
-                <option key={key} value={bank.id}>{bank.bankName}</option>
-              ))
-            }
-            {
-              aepsProvider == "paysprint" &&
-              banksList.map((bank, key) => (
-                aepsProvider == "paysprint" &&
-                <option key={key} value={bank.iino}>{bank.bankName}</option>
-              ))
-            }
-            </Select>
-            {/* <HStack spacing={2} py={2}>
+            {/* Aadhaar Pay Form */}
+            <FormControl w={'full'} pb={6}>
+              <FormLabel>Select Bank</FormLabel>
+              <Select name='bankCode'
+                value={formik.values.bankCode}
+                onChange={formik.handleChange} w={'xs'}
+              >
+                {
+                  aepsProvider == "eko" &&
+                  banksList.map((bank, key) => (
+                    <option key={key} value={bank.short_code}>{bank.name}</option>
+                  ))
+                }
+                {
+                  aepsProvider == "paysprint" &&
+                  banksList.map((bank, key) => (
+                    <option key={key} value={bank.iino}>{bank.bankName}</option>
+                  ))
+                }
+              </Select>
+              {/* <HStack spacing={2} py={2}>
 
               <Button
                 fontSize={'xs'}
@@ -493,69 +506,70 @@ const Aeps = () => {
               >Yes Bank</Button>
 
             </HStack> */}
-          </FormControl>
-          <Stack direction={['column', 'row']} spacing={6} pb={6}>
-            <FormControl w={'full'}>
-              <FormLabel>Aadhaar Number / VID</FormLabel>
-              <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-              <HStack py={2}>
-                <Checkbox name={'isVID'}>It is a VID</Checkbox>
-              </HStack>
             </FormControl>
-            <FormControl w={'full'}>
-              <FormLabel>Phone Number</FormLabel>
-              <InputGroup>
-                <InputLeftAddon children={'+91'} />
-                <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-              </InputGroup>
-            </FormControl>
-            <FormControl w={'full'}>
-              <FormLabel>Amount</FormLabel>
-              <InputGroup>
-                <InputLeftAddon children={"₹"} />
-                <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-              </InputGroup>
-              <HStack spacing={2} py={2}>
+            <Stack direction={['column', 'row']} spacing={6} pb={6}>
+              <FormControl w={'full'}>
+                <FormLabel>Aadhaar Number</FormLabel>
+                <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                <HStack py={2}>
+                  <Checkbox name={'isVID'}>It is a VID</Checkbox>
+                </HStack>
+              </FormControl>
+              <FormControl w={'full'}>
+                <FormLabel>Phone Number</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children={'+91'} />
+                  <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
+                </InputGroup>
+              </FormControl>
+              <FormControl w={'full'}>
+                <FormLabel>Amount</FormLabel>
+                <InputGroup>
+                  <InputLeftAddon children={"₹"} />
+                  <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
+                </InputGroup>
+                <HStack spacing={2} py={2}>
 
-                <Button
-                  fontSize={'xs'}
-                  value={1000}
-                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                >1000</Button>
+                  <Button
+                    fontSize={'xs'}
+                    value={1000}
+                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                  >1000</Button>
 
-                <Button
-                  fontSize={'xs'}
-                  value={2000}
-                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                >2000</Button>
+                  <Button
+                    fontSize={'xs'}
+                    value={2000}
+                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                  >2000</Button>
 
-                <Button
-                  fontSize={'xs'}
-                  value={5000}
-                  onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                >5000</Button>
+                  <Button
+                    fontSize={'xs'}
+                    value={5000}
+                    onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                  >5000</Button>
 
-              </HStack>
-            </FormControl>
-          </Stack>
+                </HStack>
+              </FormControl>
+            </Stack>
 
-          <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
-        </Box>
-
-        <Box py={6}>
-          <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
-          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-              components={{
-                'receiptCellRenderer': receiptCellRenderer
-              }}
-            >
-
-            </AgGridReact>
+            <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
-        </Box>
+
+          <Box w={['full', 'full', 'sm']}>
+            <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
+            <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+              <AgGridReact
+                columnDefs={columnDefs}
+                rowData={rowData}
+                components={{
+                  'receiptCellRenderer': receiptCellRenderer
+                }}
+              >
+
+              </AgGridReact>
+            </Box>
+          </Box>
+        </Stack>
       </DashboardWrapper>
 
 
@@ -573,7 +587,7 @@ const Aeps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'uppercase'}>Transaction {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
@@ -588,11 +602,12 @@ const Aeps = () => {
                         <Text fontSize={14}
                           fontWeight={'medium'}
                           textTransform={'capitalize'}
-                        >{item[0]}</Text>
+                        >{item[0].replace(/_/g, " ")}</Text>
                         <Text fontSize={14} >{`${item[1]}`}</Text>
                       </HStack>
                     )) : null
                 }
+
               </VStack>
             </ModalBody>
           </Box>

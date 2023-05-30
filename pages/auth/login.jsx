@@ -50,15 +50,15 @@ const Login = () => {
     const [mpin, setMpin] = useState(null)
 
     useEffect(() => {
-        // axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sanctum/csrf-cookie`, {
-        //     withCredentials: true,
-        //     headers: {
-        //         'Accept': 'application/json, text/plain, */*',
-        //         'Content-Type': 'application/json',
-        //         'X-Requested-With': 'XMLHttpRequest'
-        //     },
-        // })
         getLocation()
+        window.addEventListener("load", ()=>{
+            window.onkeydown(e=>{
+                if(e.keyCode === 13){
+                    e.preventDefault()
+                    return false
+                }
+            })
+        })
     }, [])
 
 
@@ -192,13 +192,16 @@ const Login = () => {
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
                 localStorage.setItem("balance", res.data.wallet)
-
+                localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
                 Cookies.set('access-token', res.data.token.original.access_token)
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
+            }).then(() => {
+                setTimeout(() => {
+                    Router.push("/dashboard?pageId=dashboard")
+                }, 1000);
             })
-            Router.push("/dashboard?pageId=dashboard")
 
         } catch (err) {
             console.log(err)
@@ -229,7 +232,7 @@ const Login = () => {
             await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, JSON.stringify({
                 authMethod: authMethod,
                 ...(authMethod === "email" && { "email": formik.values.user_id }),
-                ...(authMethod === "phone" && { "phone_number": formik.values.user_id }),
+                ...(authMethod === "phone" && { "phone": formik.values.user_id }),
                 password: formik.values.password,
                 mpin: mpin,
                 organization_code: process.env.NEXT_PUBLIC_ORGANISATION.toUpperCase(),
@@ -251,13 +254,16 @@ const Login = () => {
                 Cookies.set("userName", res.data.name)
                 localStorage.setItem("userType", res.data.role[0].name)
                 localStorage.setItem("balance", res.data.wallet)
+                localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
                 Cookies.set('access-token', res.data.token.original.access_token)
 
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
             }).then(() => {
-                Router.push("/dashboard?pageId=dashboard")
+                setTimeout(() => {
+                    Router.push("/dashboard?pageId=dashboard")
+                }, 1000);
             })
 
         } catch (err) {
@@ -374,8 +380,9 @@ const Login = () => {
                                         rounded={'full'}
                                         colorScheme={'blue'}
                                         variant={'outline'}
+                                        autoFocus={false}
                                         disabled={otpBtnDisabled}
-                                        type={'submit'}
+                                        onClick={formik.handleSubmit}
                                     >
                                         Login
                                     </Button>
@@ -402,6 +409,7 @@ const Login = () => {
                                                     rounded={'full'}
                                                     colorScheme={'blue'}
                                                     bg={'#6C00FF'}
+                                                    autoFocus={false}
                                                     disabled={loginBtnDisabled}
                                                     isLoading={isBtnLoading}
                                                 >

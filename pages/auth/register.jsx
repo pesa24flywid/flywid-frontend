@@ -79,7 +79,7 @@ const Register = () => {
     })
 
     useEffect(() => {
-        
+
         ClientAxios.get('/api/global').then((res) => {
             setIsRetailerDisabled(!res.data[0].retailer)
             setIsDistributorDisabled(!res.data[0].distributor)
@@ -94,7 +94,7 @@ const Register = () => {
     return (
         <>
             <Head>
-                <title>RPay - Register</title>
+                <title>Flywid - Register</title>
             </Head>
             <Navbar />
 
@@ -219,8 +219,8 @@ const Register = () => {
                                         textAlign={'left'}
                                         color={'darkslategray'}>Register as:
                                     </FormLabel>
-                                    <RadioGroup name={'user_type'} 
-                                    onChange={(value)=>formik.setFieldValue("user_type", value)} 
+                                    <RadioGroup name={'user_type'}
+                                    onChange={(value)=>formik.setFieldValue("user_type", value)}
                                     value={formik.values.user_type} >
                                         <Stack direction={['column', 'row']} spacing={[3, 6]}>
                                             <Radio isDisabled={isRetailerDisabled} value={'retailer'}>Retailer</Radio>

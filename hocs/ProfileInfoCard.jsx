@@ -24,7 +24,7 @@ const ProfileInfoCard = ({
   merchantId,
   address,
   companyName,
-  kycStatus = true,
+  kycStatus,
 }) => {
   return (
     <>
@@ -42,12 +42,12 @@ const ProfileInfoCard = ({
             alignItems={"center"}
           >
             <Heading size="md">Personal Info</Heading>
-            {/* <Link href={"/dashboard/profile/edit?pageId=profile"}>
+            <Link href={"/dashboard/profile/edit?pageId=profile"}>
               <Button colorScheme="red" variant="solid">
                 <Icon as={MdEdit} color={"white"} mr={"2"} />
                 Edit Info
               </Button>
-            </Link> */}
+            </Link>
           </CardHeader>
 
           <CardBody>
@@ -58,11 +58,11 @@ const ProfileInfoCard = ({
                 </Heading>
                 <HStack pt={2}>
                   <Icon
-                    as={ kycStatus == 1 ? MdVerifiedUser : MdError}
-                    color={kycStatus == 1 ? "green.500" : "red.500"}
+                    as={ kycStatus ? MdVerifiedUser : MdError}
+                    color={kycStatus ? "green.500" : "red.500"}
                   />
                   <Text ml="1" textColor={kycStatus ? "green.500" : "red.500"}>
-                    {kycStatus == 0 ? "Not Verified" : "Verified"}
+                    {kycStatus ? "Verified" : "Not Verified"}
                   </Text>
                 </HStack>
               </Box>

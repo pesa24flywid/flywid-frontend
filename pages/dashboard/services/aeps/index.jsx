@@ -3,6 +3,7 @@ import DashboardWrapper from '../../../../hocs/DashboardLayout'
 import $ from 'jquery'
 import {
   Box,
+  Image,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -34,8 +35,38 @@ import Cookies from 'js-cookie'
 import { BsCheck2Circle, BsClock, BsDownload, BsXCircle, BsEye } from 'react-icons/bs'
 import Pdf from 'react-to-pdf'
 
+function StatementTable({ ministatement }) {
+  if (ministatement.length === 0) {
+    return <p>No data available.</p>;
+  }
+
+  const tableHeaders = Object.keys(ministatement[0]);
+
+  return (
+    <table style={{ fontSize: '8px', borderCollapse: 'collapse', width: '100%' }}>
+      <thead>
+        <tr style={{ backgroundColor: '#f2f2f2' }}>
+          {tableHeaders.map(header => (
+            <th key={header} style={{ padding: '8px', textAlign: 'left', borderBottom: '1px solid #ddd' }}>{header}</th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {ministatement.map((item, index) => (
+          <tr key={index} style={{ borderBottom: '1px solid #ddd' }}>
+            {tableHeaders.map(header => (
+              <td key={header} style={{ padding: '8px' }}>{item[header]}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+
 const Aeps = () => {
-  const [aepsProvider, setAepsProvider] = useState("paysprint")
+  const [aepsProvider, setAepsProvider] = useState("")
   const transactionKeyword = "aeps"
   const serviceCode = "20"
   useEffect(() => {
@@ -46,7 +77,7 @@ const Aeps = () => {
         'Content-Type': 'application/json'
       }
     }).then((res) => {
-      if (res.data[0].allowed_pages.includes('aepsTransaction') == false) {
+      if (!res.data[0].allowed_pages.includes('aepsTransaction')) {
         window.location.assign('/dashboard/not-allowed')
       }
     }).catch((err) => {
@@ -55,20 +86,28 @@ const Aeps = () => {
 
     ClientAxios.get(`/api/global`).then(res => {
       setAepsProvider(res.data[0].aeps_provider)
-      if (res.data[0].aeps_status == false) {
-        window.location.assign('/dashboard/not-available')
+      if (!res.data[0].aeps_status) {
+        window.location.href('/dashboard/not-available')
       }
     }).catch(err => {
-      Toast({
-        title: 'Try again later',
-        description: 'We are facing some issues.'
-      })
+      console.log(err)
+    })
+
+    ClientAxios.get(`/api/organisation`).then(res => {
+      if (!res.data[0].aeps_status) {
+        window.location.href('/dashboard/not-available')
+      }
+    }).catch(err => {
+      console.log(err)
     })
 
   }, [])
 
+  const [rdserviceFound, setRdserviceFound] = useState(false)
+  const [rdservicePort, setRdservicePort] = useState(11101)
+
   let MethodInfo
-  function getMantra() {
+  function getMantra(port) {
     var GetCustomDomName = "127.0.0.1";
     var SuccessFlag = 0;
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -92,7 +131,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + 11101,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
@@ -125,8 +164,8 @@ const Aeps = () => {
 
     if (SuccessFlag == 1) {
       //alert("RDSERVICE Discover Successfully");
-      var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="0" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
-      var finalUrl = "http://" + GetCustomDomName + ":" + 11100;
+      var XML = '<' + '?' + 'xml version="1.0"?> <PidOptions ver="1.0"> <Opts fCount="1" fType="2" iCount="0" pCount="0" pgCount="2" format="0"   pidVer="2.0" timeout="10000" pTimeout="20000" posh="UNKNOWN" env="P" /> <CustOpts><Param name="mantrakey" value="" /></CustOpts> </PidOptions>';
+      var finalUrl = "http://" + GetCustomDomName + ":" + port;
       var verb = "CAPTURE";
       var err = "";
       var res;
@@ -199,7 +238,7 @@ const Aeps = () => {
     }
   }
 
-  function searchMantra() {
+  function searchMantra(port) {
 
     var GetCustomDomName = "127.0.0.1";
     var primaryUrl = "http://" + GetCustomDomName + ":";
@@ -223,7 +262,7 @@ const Aeps = () => {
       type: "RDSERVICE",
       async: false,
       crossDomain: true,
-      url: primaryUrl + 11100,
+      url: primaryUrl + port,
       contentType: "text/xml; charset=utf-8",
       processData: false,
       cache: false,
@@ -235,6 +274,8 @@ const Aeps = () => {
         if (CmbData1 == "READY") {
           MantraFound = 1;
           setBiometricDevice("mantra")
+          setRdserviceFound(true)
+          setRdservicePort(port)
         }
         else {
           MantraFound = 0;
@@ -243,18 +284,17 @@ const Aeps = () => {
     })
 
     if (MantraFound != 1) {
-      Toast({
-        status: "error",
-        title: "Biometric Device Not Found",
-        description: "Please connect your device and refresh this page.",
-        position: "top-right"
-      })
+      console.log('Mantra NOT Found at PORT ' + port)
     }
   }
 
   useEffect(() => {
-    searchMantra()
-  }, [])
+    if (!rdserviceFound) {
+      setRdservicePort(Number(rdservicePort) + 1)
+      searchMantra(Number(rdservicePort))
+    }
+  }, [rdserviceFound])
+
   const [isBtnLoading, setIsBtnLoading] = useState(false)
   const [biometricDevice, setBiometricDevice] = useState("")
   const [banksList, setBanksList] = useState([])
@@ -274,19 +314,42 @@ const Aeps = () => {
     },
     onSubmit: async (values) => {
       setIsBtnLoading(true)
-      await BackendAxios.post(`/api/${aepsProvider}/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
-        setReceipt({
-          show: true,
-          status: res.data.metadata.status,
-          data: res.data.metadata
+      if (aepsProvider == "paysprint") {
+        await BackendAxios.post(`/api/paysprint/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+          setIsBtnLoading(false)
+          setReceipt({
+            show: true,
+            status: res.data.metadata.status,
+            data: res.data.metadata
+          })
+        }).catch((err) => {
+          setIsBtnLoading(false)
+          Toast({
+            status: 'warning',
+            title: 'Transaction Failed',
+            description: err.response.data.message || err.response.data || err.message,
+            position: 'top-right',
+          })
         })
-      }).catch((err) => {
-        Toast({
-          title: 'Transaction Failed',
-          description: err.message,
-          position: 'top-right',
+      }
+      if (aepsProvider == "eko") {
+        await BackendAxios.post(`/api/eko/aeps/${values.serviceCode}/${values.serviceId}`, values).then((res) => {
+          setIsBtnLoading(false)
+          setReceipt({
+            show: true,
+            status: res.data.metadata.status,
+            data: res.data.metadata
+          })
+        }).catch((err) => {
+          setIsBtnLoading(false)
+          Toast({
+            status: 'warning',
+            title: 'Transaction Failed',
+            description: err.response.data.message || err.response.data || err.message,
+            position: 'top-right',
+          })
         })
-      })
+      }
       setIsBtnLoading(false)
     }
   })
@@ -300,16 +363,27 @@ const Aeps = () => {
 
   useEffect(() => {
     if (aepsProvider == "paysprint") {
-      BackendAxios.get(`/api/${aepsProvider}/aeps/fetch-bank/${serviceCode}`).then(res => {
+      BackendAxios.get(`/api/paysprint/aeps/fetch-bank/${serviceCode}`).then(res => {
         setBanksList(res.data.banklist.data)
       }).catch(err => {
         Toast({
           status: 'error',
-          description: err.response.data.message || err.response.data || err.message
+          description: err.response?.data?.message || err.response?.data || err.message
         })
       })
     }
-  }, [])
+    if (aepsProvider == "eko") {
+      BackendAxios.get(`/api/eko/aeps/fetch-bank/${serviceCode}`).then(res => {
+        setBanksList(res.data?.param_attributes?.list_elements)
+      }).catch(err => {
+        Toast({
+          status: 'error',
+          description: err.response?.data?.message || err.response?.data || err.message
+        })
+      })
+    }
+  }, [aepsProvider])
+
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -422,216 +496,195 @@ const Aeps = () => {
   return (
     <>
       <DashboardWrapper titleText={'AePS Transaction'}>
-        <Box my={4} w={['full', 'md', 'full']} p={6} boxShadow={'md'} bg={'white'}>
-          <FormControl w={'xs'} pb={8}>
-            <FormLabel>Select Service</FormLabel>
-            <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
-              <option value={'money-transfer'}>Cash Withdrawal</option>
-              <option value={'balance-enquiry'}>Balance Inquiry</option>
-              <option value={'mini-statement'}>Mini Statement</option>
-            </Select>
-          </FormControl>
+        <Stack
+          direction={['column', 'column', 'row']}
+          gap={[16, 4]} alignItems={'flex-start'}
+        >
+          <Box w={['full', 'full', '2xl']} p={6} boxShadow={'md'} bg={'white'}>
+            <FormControl w={'xs'} pb={8}>
+              <FormLabel>Select Service</FormLabel>
+              <Select name='serviceCode' value={formik.values.serviceCode} onChange={formik.handleChange}>
+                <option value={'money-transfer'}>Cash Withdrawal</option>
+                <option value={'balance-enquiry'}>Balance Inquiry</option>
+                <option value={'mini-statement'}>Mini Statement</option>
+              </Select>
+            </FormControl>
 
-          <FormControl pb={6}>
-            <FormLabel>Choose Device</FormLabel>
-            <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
-              <Stack direction={['column', 'row']} spacing={4}>
-                <Radio value='mantra'>Mantra</Radio>
-                <Radio value='morpho'>Morpho</Radio>
-                <Radio value='secugen'>Secugen</Radio>
-                <Radio value='startek'>Startek</Radio>
-              </Stack>
-            </RadioGroup>
-          </FormControl>
+            <FormControl pb={6}>
+              <FormLabel>Choose Device</FormLabel>
+              <RadioGroup name={'rdDevice'} value={biometricDevice} onChange={(value) => setBiometricDevice(value)}>
+                <Stack direction={['column', 'row']} spacing={4}>
+                  <Radio value='mantra'>Mantra</Radio>
+                  <Radio value='morpho'>Morpho</Radio>
+                  <Radio value='secugen'>Secugen</Radio>
+                  <Radio value='startek'>Startek</Radio>
+                </Stack>
+              </RadioGroup>
+            </FormControl>
 
-          {/* Cash Withdrawal Form */}
-          {
-            formik.values.serviceCode == "money-transfer" ? <>
-              <FormControl w={'full'} pb={6}>
-                <FormLabel>Select Bank</FormLabel>
-                <Select name='bankCode'
-                  value={formik.values.bankCode}
-                  onChange={formik.handleChange} w={'xs'}
-                >
-                  {
-                    aepsProvider == "eko" &&
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.id}>{bank.bankName}</option>
-                    ))
-                  }
-                  {
-                    aepsProvider == "paysprint" &&
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
-                    ))
-                  }
-                </Select>
-                {/* <HStack spacing={2} py={2}>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={"SBIN"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >State Bank of India</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={"pnb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Punjab National Bank</Button>
-
-                  <Button
-                    fontSize={'xs'}
-                    value={"yb"}
-                    onClick={(e) => formik.setFieldValue("bankCode", e.target.value)}
-                  >Yes Bank</Button>
-
-                </HStack> */}
-              </FormControl>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number / VID</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                  <HStack py={2}>
-                    <Checkbox name={'isVID'}>It is a VID</Checkbox>
-                  </HStack>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Amount</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={"₹"} />
-                    <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
-                  </InputGroup>
-                  <HStack spacing={2} py={2}>
-
-                    <Button
-                      fontSize={'xs'}
-                      value={1000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >1000</Button>
-
-                    <Button
-                      fontSize={'xs'}
-                      value={2000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >2000</Button>
-
-                    <Button
-                      fontSize={'xs'}
-                      value={5000}
-                      onClick={(e) => formik.setFieldValue("amount", e.target.value)}
-                    >5000</Button>
-
-                  </HStack>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
-
-          {/* Balance Enquiry Form */}
-          {
-            formik.values.serviceCode == "balance-enquiry" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
+            {/* Cash Withdrawal Form */}
+            {
+              formik.values.serviceCode == "money-transfer" ? <>
+                <FormControl w={'full'} pb={6}>
                   <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
-
-                  {
-                    aepsProvider == "eko" &&
-                    banksList.map((bank, key) => (
+                  <Select name='bankCode'
+                    value={formik.values.bankCode}
+                    onChange={formik.handleChange} w={'xs'}
+                  >
+                    {
+                      aepsProvider == "eko" &&
+                      banksList.map((bank, key) => (
+                        <option key={key} value={bank.value}>{bank.label}</option>
+                      ))
+                    }
+                    {
                       aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.id}>{bank.bankName}</option>
-                    ))
-                  }
-                  {
-                    aepsProvider == "paysprint" &&
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
-                    ))
-                  }
+                      banksList.map((bank, key) => (
+                        <option key={key} value={bank.iinno}>{bank.bankName}</option>
+                      ))
+                    }
                   </Select>
+
                 </FormControl>
-              </Stack>
-            </> : null
-          }
+                <Stack direction={['column', 'row']} spacing={6} pb={6}>
+                  <FormControl w={'full'}>
+                    <FormLabel>Aadhaar Number / VID</FormLabel>
+                    <Input name='aadhaarNo' placeholder='Aadhaar Number or VID' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                    <HStack py={2}>
+                      <Checkbox name={'isVID'}>It is a VID</Checkbox>
+                    </HStack>
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Phone Number</FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon children={'+91'} />
+                      <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
+                    </InputGroup>
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Amount</FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon children={"₹"} />
+                      <Input name='amount' placeholder='Enter Amount' value={formik.values.amount} onChange={formik.handleChange} />
+                    </InputGroup>
+                    <HStack spacing={2} py={2}>
 
-          {/* Mini Statement Form */}
-          {
-            formik.values.serviceCode == "mini-statement" ? <>
-              <Stack direction={['column', 'row']} spacing={6} pb={6}>
-                <FormControl w={'full'}>
-                  <FormLabel>Aadhaar Number</FormLabel>
-                  <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Phone Number</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children={'+91'} />
-                    <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
-                  </InputGroup>
-                </FormControl>
-                <FormControl w={'full'}>
-                  <FormLabel>Select Bank</FormLabel>
-                  <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
+                      <Button
+                        fontSize={'xs'}
+                        value={1000}
+                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                      >1000</Button>
 
-                  {
-                    aepsProvider == "eko" &&
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.id}>{bank.bankName}</option>
-                    ))
-                  }
-                  {
-                    aepsProvider == "paysprint" &&
-                    banksList.map((bank, key) => (
-                      aepsProvider == "paysprint" &&
-                      <option key={key} value={bank.iinno}>{bank.bankName}</option>
-                    ))
-                  }
-                  </Select>
-                </FormControl>
-              </Stack>
-            </> : null
-          }
+                      <Button
+                        fontSize={'xs'}
+                        value={2000}
+                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                      >2000</Button>
 
-          <Button colorScheme={'twitter'} onClick={() => getMantra()} isLoading={isBtnLoading}>Submit</Button>
-        </Box>
+                      <Button
+                        fontSize={'xs'}
+                        value={5000}
+                        onClick={(e) => formik.setFieldValue("amount", e.target.value)}
+                      >5000</Button>
 
-        <Box py={6}>
-          <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
-          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
-            <AgGridReact
-              columnDefs={columnDefs}
-              rowData={rowData}
-              components={{
-                'receiptCellRenderer': receiptCellRenderer
-              }}
-            >
+                    </HStack>
+                  </FormControl>
+                </Stack>
+              </> : null
+            }
 
-            </AgGridReact>
+            {/* Balance Enquiry Form */}
+            {
+              formik.values.serviceCode == "balance-enquiry" ? <>
+                <Stack direction={['column', 'row']} spacing={6} pb={6}>
+                  <FormControl w={'full'}>
+                    <FormLabel>Aadhaar Number</FormLabel>
+                    <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Phone Number</FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon children={'+91'} />
+                      <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
+                    </InputGroup>
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Select Bank</FormLabel>
+                    <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
+
+                      {
+                        aepsProvider == "eko" &&
+                        banksList.map((bank, key) => (
+                          <option key={key} value={bank.value}>{bank.label}</option>
+                        ))
+                      }
+                      {
+                        aepsProvider == "paysprint" &&
+                        banksList.map((bank, key) => (
+                          <option key={key} value={bank.iinno}>{bank.bankName}</option>
+                        ))
+                      }
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </> : null
+            }
+
+            {/* Mini Statement Form */}
+            {
+              formik.values.serviceCode == "mini-statement" ? <>
+                <Stack direction={['column', 'row']} spacing={6} pb={6}>
+                  <FormControl w={'full'}>
+                    <FormLabel>Aadhaar Number</FormLabel>
+                    <Input name='aadhaarNo' placeholder='Customer Aadhaar Number' value={formik.values.aadhaarNo} onChange={formik.handleChange} />
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Phone Number</FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon children={'+91'} />
+                      <Input name='customerId' placeholder='Customer Phone Number' value={formik.values.customerId} onChange={formik.handleChange} />
+                    </InputGroup>
+                  </FormControl>
+                  <FormControl w={'full'}>
+                    <FormLabel>Select Bank</FormLabel>
+                    <Select name='bankCode' value={formik.values.bankCode} onChange={formik.handleChange}>
+
+                      {
+                        aepsProvider == "eko" &&
+                        banksList.map((bank, key) => (
+                          <option key={key} value={bank.value}>{bank.label}</option>
+                        ))
+                      }
+                      {
+                        aepsProvider == "paysprint" &&
+                        banksList.map((bank, key) => (
+                          <option key={key} value={bank.iinno}>{bank.bankName}</option>
+                        ))
+                      }
+                    </Select>
+                  </FormControl>
+                </Stack>
+              </> : null
+            }
+
+            <Button colorScheme={'twitter'} onClick={() => getMantra(rdservicePort)} isLoading={isBtnLoading}>Submit</Button>
           </Box>
-        </Box>
+
+          <Box w={['full', 'full', 'sm']} >
+            <Text fontWeight={'medium'} pb={4}>Recent Transactions</Text>
+            <Box className='ag-theme-alpine' w={'full'} h={['sm', 'xs']}>
+              <AgGridReact
+                columnDefs={columnDefs}
+                rowData={rowData}
+                components={{
+                  'receiptCellRenderer': receiptCellRenderer
+                }}
+              >
+
+              </AgGridReact>
+            </Box>
+          </Box>
+        </Stack>
       </DashboardWrapper>
 
       {/* Receipt */}
@@ -649,26 +702,72 @@ const Aeps = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                {
+                  aepsProvider == 'eko' && formik.values.serviceCode == "balance-enquiry" ?
+                    <Text color={'#FFF'}>₹ {receipt.data.customer_balance}</Text> :
+                    formik.values.serviceCode == "money-transfer" ?
+                      <Text color={'#FFF'}>₹ {receipt.data.amount || 0}</Text> : null
+                }
+                <Text color={'#FFF'} fontSize={'xs'} textTransform={'uppercase'}>
+                  {
+                    formik.values.serviceCode == "money-transfer" ? "Cash Withdrawal" : formik.values.serviceCode.replace("-", " ")
+                  }
+                  &nbsp;
+                  {receipt.status ? "success" : "failed"}
+                </Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+//                       if (aepsProvider == 'eko')
+                        if (
+                          item[0].toLowerCase() != "status" &&
+                          item[0].toLowerCase() != "customer_balance" &&
+                          item[0].toLowerCase() != "user_name" &&
+                          item[0].toLowerCase() != "user_id" &&
+                          item[0].toLowerCase() != "amount" &&
+                          item[0].toLowerCase() != "ministatement" &&
+                          item[0].toLowerCase() != "user_phone"
+                        ){
+                          return (
+                            <HStack
+                              justifyContent={'space-between'}
+                              gap={8} pb={1} w={'full'} key={key}
+                            >
+                              <Text fontSize={'xs'}
+                                fontWeight={'medium'}
+                                textTransform={'capitalize'}
+                              >{item[0].replace(/_/g, " ")}</Text>
+                              <Text fontSize={'xs'} >{`${item[1]}`}</Text>
+                            </HStack>
+                          ) }
+                    }) : null
                 }
+{
+formik.values.serviceCode == "mini-statement" &&
+aepsProvider == "paysprint" &&
+receipt.status ?
+<StatementTable ministatement={receipt.data?.ministatement} /> : null
+}
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_name}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>

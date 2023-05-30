@@ -13,6 +13,8 @@ import {
   ModalHeader,
   ModalFooter,
   VStack,
+  Image,
+  VisuallyHidden
 } from '@chakra-ui/react'
 import { AgGridReact } from 'ag-grid-react'
 import 'ag-grid-community/styles/ag-grid.css';
@@ -29,28 +31,22 @@ import {
 } from 'react-icons/bs'
 import BackendAxios from '../../../../lib/axios';
 import Pdf from 'react-to-pdf'
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'
+
+const ExportPDF = () => {
+  const doc = new jsPDF('landscape')
+
+  doc.autoTable({ html: '#printable-table' })
+  doc.output('dataurlnewwindow');
+}
 
 const Index = () => {
   const transactionKeyword = "dmt"
-  useEffect(() => {
-    ClientAxios.post('/api/user/fetch', {
-      user_id: localStorage.getItem('userId')
-    }, {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((res) => {
-      if(res.data[0].allowed_pages.includes('dmtReport') == false){
-        window.location.assign('/dashboard/not-allowed')
-      }
-    }).catch((err) => {
-      console.log(err)
-    })
-  }, [])
-
   const Toast = useToast({
     position: 'top-right'
   })
+  const [printableRow, setPrintableRow] = useState([])
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -90,6 +86,11 @@ const Index = () => {
       field: 'service_type'
     },
     {
+      headerName: "Transaction Status",
+      field: 'status',
+      cellRenderer: 'statusCellRenderer'
+    },
+    {
       headerName: "Created Timestamp",
       field: 'created_at'
     },
@@ -120,6 +121,7 @@ const Index = () => {
         next_page_url: res.data.next_page_url,
         prev_page_url: res.data.prev_page_url,
       })
+      setPrintableRow(res.data.data)
       setRowData(res.data.data)
     }).catch((err) => {
       console.log(err)
@@ -177,9 +179,23 @@ const Index = () => {
     )
   }
 
+  const statusCellRenderer = (params) => {
+    return (
+      <>
+        {
+          JSON.parse(params.data.metadata).status ?
+            <Text color={'green'} fontWeight={'bold'}>SUCCESS</Text> : <Text color={'red'} fontWeight={'bold'}>FAILED</Text>
+        }
+      </>
+    )
+  }
+
   return (
     <>
       <DashboardWrapper pageTitle={'DMT Reports'}>
+        <HStack>
+          <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
+        </HStack>
         <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
             colorScheme={'twitter'}
@@ -216,7 +232,7 @@ const Index = () => {
           </Button>
         </HStack>
         <Box py={6}>
-          <Box className='ag-theme-alpine' w={'full'} h={['sm', 'md']}>
+          <Box className='ag-theme-alpine' w={'full'} h={['2xl']}>
             <AgGridReact
               columnDefs={columnDefs}
               rowData={rowData}
@@ -230,7 +246,17 @@ const Index = () => {
                 'receiptCellRenderer': receiptCellRenderer,
                 'creditCellRenderer': creditCellRenderer,
                 'debitCellRenderer': debitCellRenderer,
+                'statusCellRenderer': statusCellRenderer
               }}
+              onFilterChanged={
+                (params) => {
+                  setPrintableRow(params.api.getRenderedNodes().map((item) => {
+                    return (
+                      item.data
+                    )
+                  }))
+                }
+              }
             >
 
             </AgGridReact>
@@ -246,7 +272,7 @@ const Index = () => {
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {
@@ -254,26 +280,56 @@ const Index = () => {
                     <BsCheck2Circle color='#FFF' fontSize={72} /> :
                     <BsXCircle color='#FFF' fontSize={72} />
                 }
-                <Text color={'#FFF'} textTransform={'capitalize'}>Transaction {receipt.status ? "success" : "failed"}</Text>
+                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || 0}</Text>
+                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
               </VStack>
             </ModalHeader>
             <ModalBody p={0} bg={'azure'}>
               <VStack w={'full'} p={4} bg={'#FFF'}>
                 {
                   receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => (
-                      <HStack
-                        justifyContent={'space-between'}
-                        gap={8} pb={4} w={'full'} key={key}
-                      >
-                        <Text fontSize={14}
-                          fontWeight={'medium'}
-                          textTransform={'capitalize'}
-                        >{item[0]}</Text>
-                        <Text fontSize={14} >{`${item[1]}`}</Text>
-                      </HStack>
-                    )) : null
+                    Object.entries(receipt.data).map((item, key) => {
+
+                      if (
+                        item[0].toLowerCase() != "status" &&
+                        item[0].toLowerCase() != "user" &&
+                        item[0].toLowerCase() != "user_id" &&
+                        item[0].toLowerCase() != "user_phone" &&
+                        item[0].toLowerCase() != "amount"
+                      )
+                        return (
+                          <HStack
+                            justifyContent={'space-between'}
+                            gap={8} pb={1} w={'full'} key={key}
+                          >
+                            <Text
+                              fontSize={'xs'}
+                              fontWeight={'medium'}
+                              textTransform={'capitalize'}
+                            >{item[0].replace(/_/g, " ")}</Text>
+                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                          </HStack>
+                        )
+
+                    }
+                    ) : null
                 }
+                <VStack pt={8} w={'full'}>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
+                  </HStack>
+                  <HStack pb={1} justifyContent={'space-between'} w={'full'}>
+                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
+                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
+                  </HStack>
+                  <Image src='/logo_long.png' w={'20'} />
+                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
+                </VStack>
               </VStack>
             </ModalBody>
           </Box>
@@ -296,6 +352,54 @@ const Index = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+
+<VisuallyHidden>
+  <table id='printable-table'>
+    <thead>
+      <tr>
+        <th>#</th>
+        {
+          columnDefs.filter((column) => {
+            if (
+              column.field != "metadata" &&
+              column.field != "name" &&
+              column.field != "receipt" 
+            ) {
+              return (
+                column
+              )
+            }
+          }).map((column, key) => {
+            return (
+              <th key={key}>{column.headerName}</th>
+            )
+          })
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        printableRow.map((data, key) => {
+          return (
+            <tr key={key}>
+              <td>{key + 1}</td>
+              <td>{data.transaction_id}</td>
+              <td>{data.debit_amount}</td>
+              <td>{data.credit_amount}</td>
+              <td>{data.opening_balance}</td>
+              <td>{data.closing_balance}</td>
+              <td>{data.service_type}</td>
+              <td>{JSON.parse(data.metadata).status ? "SUCCESS" : "FAILED"}</td>
+              <td>{data.created_at}</td>
+              <td>{data.updated_at}</td>
+            </tr>
+          )
+        })
+      }
+    </tbody>
+  </table>
+</VisuallyHidden>
     </>
   )
 }

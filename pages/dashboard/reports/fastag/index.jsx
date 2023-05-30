@@ -4,9 +4,9 @@ import {
   useToast,
   Box,
   Text,
-  Image,
   Button,
   HStack,
+  Image,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -42,6 +42,7 @@ const ExportPDF = () => {
 }
 
 const Index = () => {
+  const transactionKeyword = "fastag"
   const Toast = useToast({
     position: 'top-right'
   })
@@ -111,7 +112,7 @@ const Index = () => {
   ])
 
   function fetchTransactions(pageLink) {
-    BackendAxios.get(pageLink || `/api/user/ledger?page=1`).then((res) => {
+    BackendAxios.get(pageLink || `/api/user/ledger/${transactionKeyword}?page=1`).then((res) => {
       setPagination({
         current_page: res.data.current_page,
         total_pages: parseInt(res.data.last_page),
@@ -120,8 +121,8 @@ const Index = () => {
         next_page_url: res.data.next_page_url,
         prev_page_url: res.data.prev_page_url,
       })
-      setRowData(res.data.data)
       setPrintableRow(res.data.data)
+      setRowData(res.data.data)
     }).catch((err) => {
       console.log(err)
       Toast({
@@ -191,7 +192,7 @@ const Index = () => {
 
   return (
     <>
-      <DashboardWrapper pageTitle={'Transaction Ledger'}>
+      <DashboardWrapper pageTitle={'Recharge Reports'}>
         <HStack>
           <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
         </HStack>
@@ -263,15 +264,18 @@ const Index = () => {
         </Box>
       </DashboardWrapper>
 
-      {/* Receipt */}
 
+
+
+
+      {/* Receipt */}
       <Modal
         isOpen={receipt.show}
         onClose={() => setReceipt({ ...receipt, show: false })}
       >
         <ModalOverlay />
         <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
             <ModalHeader p={0}>
               <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
                 {

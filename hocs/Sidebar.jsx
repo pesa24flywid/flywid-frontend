@@ -16,7 +16,7 @@ import {
 import { BiRupee, BiUser, BiPowerOff } from "react-icons/bi";
 import { VscDashboard } from "react-icons/vsc";
 import { IoMdHelpBuoy } from "react-icons/io";
-import BackendAxios from "../lib/axios";
+import BackendAxios, { ClientAxios } from "../lib/axios";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { BsFileEarmarkBarGraph, BsBank, BsPeopleFill } from "react-icons/bs";
@@ -35,25 +35,25 @@ export const SidebarOptions =
         {
           title: 'view profile',
           link: '/dashboard/profile?pageId=profile',
-          id: "view-profile",
+          id: "viewProfile",
           soon: false,
         },
         {
           title: 'edit profile',
           link: '/dashboard/profile/edit?pageId=profile',
-          id: "edit-profile",
+          id: "editProfile",
           soon: false,
         },
         {
           title: 'reset MPIN',
           link: '/dashboard/profile/reset-mpin?pageId=profile',
-          id: "reset-mpin",
+          id: "resetMpin",
           soon: false,
         },
         {
           title: 'reset password',
           link: '/dashboard/profile/reset-password?pageId=profile',
-          id: "reset-password",
+          id: "resetPassword",
           soon: false,
         },
       ]
@@ -72,69 +72,76 @@ export const SidebarOptions =
         {
           title: 'Activate services',
           link: '/dashboard/services/activate?pageId=services',
-          id: "activate",
+          id: "basicServiceActivate",
           soon: false,
         },
         {
           title: 'AePS services',
           link: '/dashboard/services/aeps?pageId=services',
-          id: "aeps",
+          id: "aepsTransaction",
           soon: false
         },
         {
           title: 'Aadhaar Pay',
           link: '/dashboard/services/aeps/pay?pageId=services',
-          id: "aeps",
+          id: "aepsAadhaarPay",
           soon: false
+
         },
         {
           title: 'DMT services',
           link: '/dashboard/services/dmt?pageId=services',
-          id: "dmt",
+          id: "dmtTransaction",
           soon: false,
         },
         {
           title: 'BBPS services',
           link: '/dashboard/services/bbps?pageId=services',
-          id: "bbps",
+          id: "bbpsTransaction",
           soon: false,
         },
         {
           title: 'recharge',
           link: '/dashboard/services/recharge?pageId=services',
-          id: "recharge",
+          id: "rechargeTransaction",
           soon: false,
         },
-        // {
-        //   title: 'payout',
-        //   link: '/dashboard/services/payout?pageId=services',
-        //   id: "payout",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'axis account opening',
-        //   link: '/dashboard/services/payout?pageId=services',
-        //   id: "axis",
-        //   soon: true,
-        // },
-        // {
-        //   title: 'LIC services',
-        //   link: '/dashboard/services/lic?pageId=services',
-        //   id: "lic",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'PAN services',
-        //   link: '/dashboard/services/pan?pageId=services',
-        //   id: "pan",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'CMS services',
-        //   link: '/dashboard/services/cms?pageId=services',
-        //   id: "cms",
-        //   soon: false,
-        // },
+        {
+          title: 'payout',
+          link: '/dashboard/services/payout?pageId=services',
+          id: "payoutTransaction",
+          soon: false,
+        },
+        {
+          title: 'axis bank account',
+          link: '/dashboard/services/axis?pageId=services',
+          id: "axisTransaction",
+          soon: false,
+        },
+        {
+          title: 'LIC services',
+          link: '/dashboard/services/lic?pageId=services',
+          id: "licTransaction",
+          soon: false,
+        },
+        {
+          title: 'PAN services',
+          link: '/dashboard/services/pan?pageId=services',
+          id: "panTransaction",
+          soon: false,
+        },
+        {
+          title: 'CMS services',
+          link: '/dashboard/services/cms?pageId=services',
+          id: "cmsTransaction",
+          soon: false,
+        },
+        {
+          title: 'Fastag',
+          link: '/dashboard/services/fastag?pageId=services',
+          id: "fastagTransaction",
+          soon: false,
+        },
       ]
     },
     {
@@ -167,73 +174,79 @@ export const SidebarOptions =
         {
           title: 'AePS reports',
           link: '/dashboard/reports/aeps?pageId=reports',
-          id: "aepsReports",
+          id: "aepsReport",
           soon: false,
         },
         {
           title: 'BBPS reports',
           link: '/dashboard/reports/bbps?pageId=reports',
-          id: "bbpsReports",
+          id: "bbpsReport",
           soon: false,
         },
         {
           title: 'recharge reports',
           link: '/dashboard/reports/recharge?pageId=reports',
-          id: "rechargeReports",
+          id: "rechargeReport",
           soon: false,
         },
         {
           title: 'DMT reports',
           link: '/dashboard/reports/dmt?pageId=reports',
-          id: "dmtReports",
+          id: "dmtReport",
           soon: false,
         },
-        // {
-        //   title: 'payout reports',
-        //   link: '/dashboard/reports/payout?pageId=reports',
-        //   id: "payoutReports",
-        //   soon: false,
-        // },
+        {
+          title: 'payout reports',
+          link: '/dashboard/reports/payout?pageId=reports',
+          id: "payoutReport",
+          soon: false,
+        },
         {
           title: 'fund requests',
           link: '/dashboard/reports/fund-requests?pageId=reports',
           id: "fundRequests",
           soon: false,
         },
-        // {
-        //   title: 'LIC reports',
-        //   link: '/dashboard/reports/lic?pageId=reports',
-        //   id: "licReports",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'PAN reports',
-        //   link: '/dashboard/reports/pan?pageId=reports',
-        //   id: "panReports",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'CMS reports',
-        //   link: '/dashboard/reports/cms?pageId=reports',
-        //   id: "cmsReports",
-        //   soon: false,
-        // },
-        // {
-        //   title: 'axis accounts',
-        //   link: '/dashboard/reports/axis?pageId=reports',
-        //   id: "axisReports",
-        //   soon: true,
-        // },
+        {
+          title: 'LIC reports',
+          link: '/dashboard/reports/lic?pageId=reports',
+          id: "licReport",
+          soon: false,
+        },
+        {
+          title: 'PAN reports',
+          link: '/dashboard/reports/pan?pageId=reports',
+          id: "panReport",
+          soon: false,
+        },
+        {
+          title: 'CMS reports',
+          link: '/dashboard/reports/cms?pageId=reports',
+          id: "cmsReport",
+          soon: false,
+        },
+        {
+          title: 'axis accounts',
+          link: '/dashboard/reports/axis?pageId=reports',
+          id: "axisReport",
+          soon: true,
+        },
+        {
+          title: 'fastag reports',
+          link: '/dashboard/reports/fastag?pageId=reports',
+          id: "fastagReport",
+          soon: false,
+        },
         {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',
-          id: "axisReports",
+          id: "transactionLedger",
           soon: false,
         },
         {
           title: 'Daily Sales',
           link: '/dashboard/reports/axis?pageId=reports',
-          id: "axisReports",
+          id: "dailySales",
           soon: false,
         },
       ]
@@ -247,8 +260,9 @@ export const SidebarOptions =
     },
   ]
 
-const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => {
-  const [activeServices, setActiveServices] = useState([])
+const Sidebar = ({ userName, userImage }) => {
+  const alwaysAvailable = ['viewProfile', 'editProfile', 'resetMpin', 'resetPassword']
+  const [availablePages, setAvailablePages] = useState(['activate'])
   const Router = useRouter()
   const { pageId } = Router.query
   const [userType, setUserType] = useState("")
@@ -270,10 +284,15 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
     Router.push("/auth/login")
   }
 
-
-  useMemo(() => {
-    BackendAxios.get('/api/user/services').then((res) => {
-      setActiveServices(res.data.map((item) => item.type))
+  useEffect(() => {
+    ClientAxios.post('/api/user/fetch', {
+      user_id: localStorage.getItem('userId')
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => {
+      setAvailablePages(res.data[0].allowed_pages)
     }).catch((err) => {
       console.log(err)
     })
@@ -299,7 +318,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
           <Link href={"/dashboard/profile?pageId=profile"}>
             <VStack spacing={2}>
               <Image
-                src={userImage}
+                src={userImage || "/avatar.png"}
                 w={"24"}
                 rounded={"full"}
                 mx={"auto"}
@@ -307,7 +326,7 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                 border={"2px"}
                 borderColor={"gray.200"}
               />
-              <Text fontSize={"xl"}>{userName}</Text>
+              <Text fontSize={"xl"} textAlign={'center'}>{userName}</Text>
               <Text
                 fontSize={"sm"}
                 color={"darkslategray"}
@@ -364,11 +383,11 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                           >
 
                             {option.children.map((item, key) => {
-                              if (availablePages.includes(item.id) != null) {
+                              if (availablePages.includes(item.id) || alwaysAvailable.includes(item.id)) {
                                 return (
                                   <Box
-                                  px={3} py={2} w={'full'}
-                                  _hover={{ bg: 'aqua' }}
+                                    px={3} py={2} w={'full'}
+                                    _hover={{ bg: 'aqua' }}
                                   >
                                     <Link key={key} href={item.soon ? "#" : item.link}
                                       style={{
@@ -391,17 +410,6 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
                                   </Box>
                                 )
                               }
-                              else {
-                                return (
-                                  <Link key={key} href={item.link} style={{ width: '100%' }}>
-                                    <Text
-                                      w={'full'} textAlign={'left'}
-                                      px={3} py={2} _hover={{ bg: 'aqua' }}
-                                      textTransform={'capitalize'}
-                                    >{item.title}</Text>
-                                  </Link>
-                                )
-                              }
                             })}
                           </VStack>
 
@@ -422,7 +430,10 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
               <Accordion allowToggle w={'full'}>
 
                 <AccordionItem>
-                  <AccordionButton px={[0, 3]} _expanded={{ bg: 'aqua' }}>
+                  <AccordionButton px={[0, 3]}
+                    _expanded={{ bg: 'aqua' }}
+                    id={'users'}
+                  >
                     <HStack spacing={1} flex={1} fontSize={['1.2rem', 'md']} alignItems={'center'}>
                       <BsPeopleFill />
                       <Text textTransform={'capitalize'}>Manage Users</Text>
@@ -432,38 +443,45 @@ const Sidebar = ({ isProfileComplete, userName, userImage, availablePages }) => 
 
                   <AccordionPanel px={0}>
 
-
                     <VStack
                       w={'full'}
                       alignItems={'flex-start'}
                       justifyContent={'flex-start'}
                       spacing={2}
                       overflow={'hidden'}
-                      id={'users'}
                     >
-                      <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >Create User</Text>
-                      </Link>
+                      {
+                        availablePages.includes('userManagementCreateUser') ?
+                          <Link href={"/dashboard/users/create-user?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >Create User</Text>
+                          </Link> : null
+                      }
 
-                      <Link href={"/dashboard/users/users-list?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >View User</Text>
-                      </Link>
+                      {
+                        availablePages.includes('userManagementUsersList') ?
+                          <Link href={"/dashboard/users/view-users?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >View Users</Text>
+                          </Link> : null
+                      }
 
-                      <Link href={"/dashboard/users/users-report?pageId=users"} style={{ width: '100%' }}>
-                        <Text
-                          w={'full'} textAlign={'left'}
-                          px={3} py={2} _hover={{ bg: 'aqua' }}
-                          textTransform={'capitalize'}
-                        >Users Report</Text>
-                      </Link>
+                      {
+                        availablePages.includes('userManagementUserLedger') ?
+                          <Link href={"/dashboard/users/user-ledger?pageId=users"} style={{ width: '100%' }}>
+                            <Text
+                              w={'full'} textAlign={'left'}
+                              px={3} py={2} _hover={{ bg: 'aqua' }}
+                              textTransform={'capitalize'}
+                            >User Ledger</Text>
+                          </Link> : null
+                      }
 
                     </VStack>
 
