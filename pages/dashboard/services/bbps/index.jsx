@@ -574,7 +574,7 @@ const Bbps = () => {
                   {
                     fetchBillBtn ?
                       <Button colorScheme={'facebook'} onClick={(e) => fetchBill(e)}>Fetch Bill</Button> :
-                      <Button colorScheme={'twitter'} onClick={onOpen}>Pay (₹{amount})</Button>
+                      <Button colorScheme={'orange'} onClick={onOpen}>Pay (₹{amount})</Button>
                   }
                 </form> : null
             }
@@ -607,7 +607,7 @@ const Bbps = () => {
           <ModalFooter>
             <HStack justifyContent={'flex-end'} gap={6}>
               <Button onClick={onClose}>Cancel</Button>
-              <Button colorScheme='twitter' onClick={(e) => payBill(e)}>Submit</Button>
+              <Button colorScheme='orange' onClick={(e) => payBill(e)}>Submit</Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
@@ -664,22 +664,7 @@ const Bbps = () => {
                     }
                     ) : null
                 }
-                <VStack pt={8} spacing={0} w={'full'}>
-                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user}</Text>
-                  </HStack>
-                  <HStack borderWidth={'0.75px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant ID:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user_id}</Text>
-                  </HStack>
-                  <HStack borderWidth={'1px'} p={2} pb={1} justifyContent={'space-between'} w={'full'}>
-                    <Text fontSize={'xs'} fontWeight={'semibold'}>Merchant Mobile:</Text>
-                    <Text fontSize={'xs'}>{receipt.data.user_phone}</Text>
-                  </HStack>
-                  <Image src='/logo_long.png' w={'20'} pt={4} />
-                  <Text fontSize={'xs'}>{process.env.NEXT_PUBLIC_ORGANISATION_NAME}</Text>
-                </VStack>
+
               </VStack>
             </ModalBody>
           </Box>
@@ -695,7 +680,7 @@ const Bbps = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'twitter'}
+                    colorScheme={'orange'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download

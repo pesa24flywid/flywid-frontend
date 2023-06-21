@@ -123,6 +123,10 @@ const DashboardWrapper = (props) => {
         }).then((res) => {
             setWallet(res.data[0].wallet)
         }).catch((err) => {
+            if(err.response.status == 401){
+                signout()
+                return
+            }
             setWallet('0')
             console.log(err)
         })
@@ -141,16 +145,21 @@ const DashboardWrapper = (props) => {
     }, [globalNotifications, organisationNotifications, userNotifications])
 
 
-    async function signout() {
-        await BackendAxios.post("/logout").then(() => {
+    function signout() {
+        BackendAxios.post("/logout").then(() => {
             Cookies.remove("verified")
+            Router.push("/auth/login")
+        }).catch(()=>{
+            Cookies.remove("verified")
+            Router.push("/auth/login")
+        }).finally(()=>{
+            Router.push("/auth/login")
         })
-        Router.push("/auth/login")
     }
 
     return (
         <>
-            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Janpay - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}
@@ -244,7 +253,7 @@ const DashboardWrapper = (props) => {
                             </HStack>
                             <Show below='md'>
                                 <Link href={'/dashboard/profile?pageId=prfile'}>
-                                    <HStack p={2} rounded={'full'} bgColor={'twitter.500'}>
+                                    <HStack p={2} rounded={'full'} bgColor={'orange.500'}>
                                         <Text fontSize={'md'} fontWeight={'semibold'}>₹ {wallet}</Text>
                                         <BsPlusCircleFill size={20} />
                                     </HStack>
@@ -252,7 +261,7 @@ const DashboardWrapper = (props) => {
                             </Show>
                         </HStack>
                         {/* Topbar Ends */}
-                        
+
                         <Box p={[4, 0]} pr={[4, 4]}>
                             {props.children}
                         </Box>
