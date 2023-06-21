@@ -46,8 +46,8 @@ const Cms = () => {
                 latitude: latlong.split(",")[0],
                 longitude: latlong.split(",")[1]
             }).then(res => {
-                if (res.data.redirecturl) {
-                    window.open(`${res.data.redirecturl}`, "_blank")
+                if (res.data.redirectionUrl) {
+                    window.open(`${res.data.redirectionUrl}`, "_blank")
                 }
                 else {
                     Toast({
