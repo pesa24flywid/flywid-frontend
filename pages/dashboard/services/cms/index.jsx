@@ -32,14 +32,15 @@ const Cms = () => {
     const pdfRef = useRef()
     const [transactionResponse, setTransactionResponse] = useState({})
     const [billers, setBillers] = useState([])
+    const [latlong, setLatlong] = useState("")
     const Formik = useFormik({
         initialValues: {
             provider: "airtel",
             transactionId: "",
             referenceId: "",
             billerId: "",
-            latitude: Cookies.get("latlong").split(",")[0],
-            longitude: Cookies.get("latlong").split(",")[1]
+            latitude: latlong.split(",")[0],
+            longitude: latlong.split(",")[1]
         },
         onSubmit: values => {
             BackendAxios.post(`/api/paysprint/cms/${values.provider}`, values).then(res => {
@@ -61,6 +62,10 @@ const Cms = () => {
             })
         }
     })
+
+    useEffect(()=>{
+        setLatlong(Cookies.get("latlong"))
+    },[])
 
     function checkStatus() {
         BackendAxios.post(`/api/paysprint/cms/status`, {
