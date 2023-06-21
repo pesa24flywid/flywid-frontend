@@ -38,12 +38,14 @@ const Cms = () => {
             provider: "airtel",
             transactionId: "",
             referenceId: "",
-            billerId: "",
-            latitude: latlong.split(",")[0],
-            longitude: latlong.split(",")[1]
+            billerId: ""
         },
         onSubmit: values => {
-            BackendAxios.post(`/api/paysprint/cms/${values.provider}`, values).then(res => {
+            BackendAxios.post(`/api/paysprint/cms/${values.provider}`, {
+                ...values,
+                latitude: latlong.split(",")[0],
+                longitude: latlong.split(",")[1]
+            }).then(res => {
                 if (res.data.redirecturl) {
                     window.open(`${res.data.redirecturl}`, "_blank")
                 }
