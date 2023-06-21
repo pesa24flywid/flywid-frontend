@@ -23,6 +23,7 @@ import BackendAxios, { ClientAxios } from '../../../../lib/axios'
 import { useFormik } from 'formik'
 import Pdf from 'react-to-pdf'
 import { BsDownload } from 'react-icons/bs'
+import Cookies from 'js-cookie'
 
 
 const Cms = () => {
