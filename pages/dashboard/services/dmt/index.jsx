@@ -720,7 +720,7 @@ const Dmt = () => {
                                             value={customerId}
                                             onChange={(e) => setCustomerId(e.target.value)}
                                         />
-                                        <Button type={'submit'} colorScheme={'orange'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
+                                        <Button type={'submit'} colorScheme={'twitter'} isLoading={isBtnLoading} onClick={(event) => checkSender(event)}>Check</Button>
                                     </HStack>
                                 </Box> :
                                 <HStack justifyContent={'space-between'} w={'full'}>
@@ -780,7 +780,7 @@ const Dmt = () => {
                                     </Select>
                                 </FormControl>
                             </Stack>
-                            <Button colorScheme={'orange'} isLoading={isBtnLoading} onClick={registrationFormik.handleSubmit}>Submit</Button>
+                            <Button colorScheme={'twitter'} isLoading={isBtnLoading} onClick={registrationFormik.handleSubmit}>Submit</Button>
                         </> : null
                     }
 
@@ -899,7 +899,7 @@ const Dmt = () => {
                                                                     w={['full', 'fit-content']}
                                                                     fontSize={['unset', 'xs']}
                                                                     rounded={['0', 'full']}
-                                                                    colorScheme={'orange'}
+                                                                    colorScheme={'twitter'}
                                                                     value={item.accountNumber}
                                                                     onClick={(e) => handleRecipientSelection(e.target.value)}
                                                                 >Transfer</Button>
@@ -929,7 +929,7 @@ const Dmt = () => {
                                 isBtnHidden ?
                                     null :
                                     <Button
-                                        colorScheme={'orange'}
+                                        colorScheme={'twitter'}
                                         isLoading={isBtnLoading}
                                         onClick={() => setPaymentConfirmationModal(true)}>Submit
                                     </Button>
@@ -1147,7 +1147,7 @@ const Dmt = () => {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
                                         size={'sm'}
-                                        colorScheme={'orange'}
+                                        colorScheme={'twitter'}
                                         leftIcon={<BsDownload />}
                                         onClick={toPdf}
                                     >Download

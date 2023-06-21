@@ -255,7 +255,7 @@ const FundRequest = () => {
                 })
                 return
             }
-            window.open(`https://janpay.online/${params.data.receipt}`, "_blank")
+            window.open(`https://pesa24.in/${params.data.receipt}`, "_blank")
         }
         return (
             <HStack height={'full'} w={'full'} gap={4}>
@@ -436,7 +436,7 @@ const FundRequest = () => {
                                 variant={'outline'}
                                 onClick={Formik.handleReset}
                             >Clear Data</Button>
-                            <Button colorScheme={'orange'} onClick={Formik.handleSubmit}>Send Request</Button>
+                            <Button colorScheme={'twitter'} onClick={Formik.handleSubmit}>Send Request</Button>
                         </HStack>
                     </Box>
                 </form>

@@ -213,7 +213,7 @@ const Payout = () => {
                                     />
                                 </InputGroup>
                             </FormControl>
-                            <Button colorScheme={'orange'} onClick={onOpen}>Done</Button>
+                            <Button colorScheme={'twitter'} onClick={onOpen}>Done</Button>
                         </Stack>
 
                     </Box>
@@ -248,7 +248,7 @@ const Payout = () => {
                                                     <Td>
                                                         <Button
                                                             size={'xs'}
-                                                            colorScheme='orange'
+                                                            colorScheme='twitter'
                                                             rounded={'full'}
                                                             onClick={() => showReceipt({
                                                                 status: item.status == "processing" || item.status == "processed" ? true : false,
@@ -393,7 +393,7 @@ const Payout = () => {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
                                         size={'sm'}
-                                        colorScheme={'orange'}
+                                        colorScheme={'twitter'}
                                         leftIcon={<BsDownload />}
                                         onClick={toPdf}
                                     >Download

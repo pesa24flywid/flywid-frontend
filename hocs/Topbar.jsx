@@ -69,7 +69,7 @@ const Topbar = () => {
                 boxShadow={'base'}
             >
                 <Image
-                    w={'44'}
+                    w={'28'}
                     src={'/logo_long.png'}
                 />
                 {/* <Text fontWeight={'semibold'}>Pesa24</Text> */}
@@ -86,7 +86,7 @@ const Topbar = () => {
                 </Show> */}
                 <Button
                     leftIcon={<IoMdHelpBuoy fontSize={'1.25rem'} />}
-                    rounded={'full'} colorScheme={'orange'}
+                    rounded={'full'} colorScheme={'twitter'}
                     onClick={onOpen}
                 >New Ticket</Button>
             </HStack>
@@ -127,7 +127,7 @@ const Topbar = () => {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme={'orange'} onClick={Formik.handleSubmit}>Send</Button>
+                        <Button colorScheme={'twitter'} onClick={Formik.handleSubmit}>Send</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

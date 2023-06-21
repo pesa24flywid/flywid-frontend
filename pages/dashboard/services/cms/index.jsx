@@ -171,7 +171,7 @@ const Cms = () => {
                         <FormLabel>Transaction ID</FormLabel>
                         <Input name='transactionId' onChange={Formik.handleChange} />
                     </FormControl>
-                    <Button colorScheme='orange' onClick={Formik.handleSubmit}>Submit</Button>
+                    <Button colorScheme='twitter' onClick={Formik.handleSubmit}>Submit</Button>
                 </Box>
                 <Text size={'lg'} fontWeight={'semibold'} pt={'16'} pb={"4"}>Check Transaction Status</Text>
                 <Box
@@ -238,7 +238,7 @@ const Cms = () => {
                                     ({ toPdf }) => <Button
                                         rounded={'full'}
                                         size={'sm'}
-                                        colorScheme={'orange'}
+                                        colorScheme={'twitter'}
                                         leftIcon={<BsDownload />}
                                         onClick={toPdf}
                                     >Download

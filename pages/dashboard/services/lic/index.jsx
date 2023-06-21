@@ -184,7 +184,7 @@ const Lic = () => {
           {
             billFetched ?
               <Button colorScheme='whatsapp' onClick={onOpen}>Pay Bill</Button> :
-              <Button colorScheme='orange' onClick={fetchInfo}>Fetch Details</Button>
+              <Button colorScheme='twitter' onClick={fetchInfo}>Fetch Details</Button>
           }
         </Box>
       </DashboardWrapper>
@@ -209,7 +209,7 @@ const Lic = () => {
           </ModalBody>
           <ModalFooter>
             <HStack justifyContent={'flex-end'}>
-              <Button colorScheme='orange' onClick={payBill}>Confirm</Button>
+              <Button colorScheme='twitter' onClick={payBill}>Confirm</Button>
             </HStack>
           </ModalFooter>
         </ModalContent>
@@ -281,7 +281,7 @@ const Lic = () => {
                   ({ toPdf }) => <Button
                     rounded={'full'}
                     size={'sm'}
-                    colorScheme={'orange'}
+                    colorScheme={'twitter'}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >Download

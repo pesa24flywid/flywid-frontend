@@ -491,7 +491,7 @@ const EditProfile = () => {
                 <HStack p={2} justifyContent={'flex-end'}>
                   <Button
                     size={'xs'}
-                    colorScheme={'orange'}
+                    colorScheme={'twitter'}
                     isDisabled={isPanDisabled ? true : formik.values.pan.length !== 10}
                     onClick={verifyPan}
                   >Verify</Button>
@@ -719,7 +719,7 @@ const EditProfile = () => {
                 />
               </FormControl>
             </Stack>
-            {/* <Button colorScheme={'orange'} onClick={profileFormik.handleSubmit}>Upload</Button> */}
+            {/* <Button colorScheme={'twitter'} onClick={profileFormik.handleSubmit}>Upload</Button> */}
           </Stack>
         </Stack>
       </DashboardWrapper>
@@ -738,7 +738,7 @@ const EditProfile = () => {
               <Input type={'tel'} maxLength={10} placeholder={'Your Phone Number'} value={newPhone} onChange={(e) => setNewPhone(e.target.value)} />
             </InputGroup>
             <HStack justifyContent={'flex-end'} py={[0, 2]}>
-              <Button colorScheme={'orange'} disabled={isPhoneOtpDisabled} size={'xs'} onClick={sendPhoneOtp}>Send OTP</Button>
+              <Button colorScheme={'twitter'} disabled={isPhoneOtpDisabled} size={'xs'} onClick={sendPhoneOtp}>Send OTP</Button>
             </HStack>
 
             <VStack display={otpSent ? "flex" : "none"}>
@@ -751,7 +751,7 @@ const EditProfile = () => {
                   <PinInputField />
                 </PinInput>
               </HStack>
-              <Button colorScheme={'orange'} onClick={verifyPhoneOtp}>Verify</Button>
+              <Button colorScheme={'twitter'} onClick={verifyPhoneOtp}>Verify</Button>
             </VStack>
 
           </ModalBody>
@@ -769,7 +769,7 @@ const EditProfile = () => {
           <ModalBody>
             <Input type={'tel'} placeholder={'Your Aadhaar Number'} maxLength={12} value={newAadhaar} onChange={(e) => setNewAadhaar(e.target.value)} />
             <HStack justifyContent={'flex-end'} py={[0, 2]}>
-              <Button colorScheme={'orange'} disabled={isAadhaarOtpDisabled} size={'xs'} onClick={sendAadhaarOtp}>Send OTP</Button>
+              <Button colorScheme={'twitter'} disabled={isAadhaarOtpDisabled} size={'xs'} onClick={sendAadhaarOtp}>Send OTP</Button>
             </HStack>
 
             <VStack display={otpSent ? "flex" : "none"}>
@@ -784,7 +784,7 @@ const EditProfile = () => {
                   <PinInputField />
                 </PinInput>
               </HStack>
-              <Button colorScheme={'orange'} onClick={verifyAadhaarOtp}>Verify</Button>
+              <Button colorScheme={'twitter'} onClick={verifyAadhaarOtp}>Verify</Button>
             </VStack>
 
           </ModalBody>

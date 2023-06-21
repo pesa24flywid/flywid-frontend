@@ -197,7 +197,7 @@ const Index = () => {
                             <Input name='message' onChange={Formik.handleChange} />
                         </FormControl>
                         <Button
-                            colorScheme={'orange'} mt={8} w={'full'}
+                            colorScheme={'twitter'} mt={8} w={'full'}
                             onClick={() => setIsPinModalVisible(true)}
                         >
                             Done
@@ -270,7 +270,7 @@ const Index = () => {
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'}>
-                            <Button onClick={Formik.handleSubmit} colorScheme='orange'>Confirm</Button>
+                            <Button onClick={Formik.handleSubmit} colorScheme='twitter'>Confirm</Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>
@@ -324,7 +324,7 @@ const Index = () => {
                     </ModalBody>
                     <ModalFooter>
                         <HStack justifyContent={'flex-end'}>
-                            <Button onClick={BankFormik.handleSubmit} colorScheme='orange'>Save</Button>
+                            <Button onClick={BankFormik.handleSubmit} colorScheme='twitter'>Save</Button>
                         </HStack>
                     </ModalFooter>
                 </ModalContent>

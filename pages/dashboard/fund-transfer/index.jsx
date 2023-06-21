@@ -135,7 +135,7 @@ const FundTransfer = () => {
         }
         return (
             <HStack height={'full'} w={'full'} gap={4}>
-                <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
+                <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt(true)}><BsEye /></Button>
             </HStack>
         )
     }
@@ -192,7 +192,7 @@ const FundTransfer = () => {
                         overflow={'hidden'}
                     >
                         <Box
-                            bg={'orange.500'}
+                            bg={'twitter.500'}
                             p={3} color={'white'}
                         >
                             <Text>Transfer Funds To Any Registered User</Text>
@@ -289,7 +289,7 @@ const FundTransfer = () => {
                             <HStack justifyContent={'flex-end'}>
                                 <Button
                                     type='submit' onClick={onOpen}
-                                    colorScheme={'orange'}>Submit</Button>
+                                    colorScheme={'twitter'}>Submit</Button>
                             </HStack>
                         </Box>
                     </Box>
@@ -391,7 +391,7 @@ const FundTransfer = () => {
                                         ({ toPdf }) => <Button
                                             rounded={'full'}
                                             size={'sm'}
-                                            colorScheme={'orange'}
+                                            colorScheme={'twitter'}
                                             leftIcon={<BsDownload />}
                                             onClick={toPdf}
                                         >Download

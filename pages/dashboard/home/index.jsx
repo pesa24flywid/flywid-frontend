@@ -91,11 +91,11 @@ const Index = () => {
                         >
                             <Icon as={BiRupee} fontSize={[28, 48]} />
                             <Box>
-                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Bigpay</Text>
+                                <Text fontSize={['sm']} textAlign={['center', 'left']}>Payout</Text>
                                 <Text fontSize={['lg', '2xl']} fontWeight={'semibold'}>₹ {Math.abs(payoutData?.credit - payoutData?.debit) || 0}</Text>
                             </Box>
                         </Stack>
-                        {/* <Stack
+                        <Stack
                             direction={['column', 'row']}
                             p={4} boxShadow={'md'}
                             rounded={8} flex={1}
@@ -114,7 +114,7 @@ const Index = () => {
                                     ₹ {Math.abs(bbpsData.credit - bbpsData.debit) || 0}
                                 </Text>
                             </Box>
-                        </Stack> */}
+                        </Stack>
                         <Stack
                             direction={['column', 'row']}
                             p={4} boxShadow={'md'}
@@ -151,7 +151,7 @@ const Index = () => {
 
                         <HStack justifyContent={'flex-start'} gap={[4, 8]} flexWrap={'wrap'}>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/aeps?pageId=services'}
                                     style={{
@@ -169,7 +169,7 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >AePS</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
                             <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
@@ -187,11 +187,11 @@ const Index = () => {
                                         textAlign={'center'}
                                         color={'#FFF'}
                                         fontSize={['sm', 'md']}
-                                    >Bigpay</Text>
+                                    >Payout</Text>
                                 </Link>
                             </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/bbps/all?pageId=services'}
                                     style={{
@@ -217,7 +217,7 @@ const Index = () => {
                                         paddingTop={1}
                                     >Bill Pay</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
                             <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
@@ -239,7 +239,7 @@ const Index = () => {
                                 </Link>
                             </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/recharge?pageId=services'}
                                     style={{
@@ -257,9 +257,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >Recharge</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/fastag?pageId=services'}
                                     style={{
@@ -277,9 +277,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >Fastag</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/lic?pageId=services'}
                                     style={{
@@ -297,9 +297,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >LIC</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/pan?pageId=services'}
                                     style={{
@@ -317,9 +317,9 @@ const Index = () => {
                                         fontSize={['sm', 'md']}
                                     >PAN Card</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
-                            {/* <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
+                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
                                     href={'/dashboard/services/axis?pageId=services'}
                                     style={{
@@ -338,12 +338,12 @@ const Index = () => {
                                         paddingTop={1}
                                     >Axis Bank</Text>
                                 </Link>
-                            </Box> */}
+                            </Box>
 
                         </HStack>
                     </Box>
 
-                    {/* <Box
+                    <Box
                         width={'100%'}
                         rounded={16}
                         boxShadow={'lg'}
@@ -433,7 +433,7 @@ const Index = () => {
                             }
 
                         </HStack>
-                    </Box> */}
+                    </Box>
 
                     <Box w={'full'} mt={8} p={4} rounded={16} boxShadow={'lg'} bgColor={'whatsapp.400'}>
                         <HStack justifyContent={'space-between'}>
@@ -451,36 +451,20 @@ const Index = () => {
                     </Box>
                     <Text my={8} fontWeight={'semibold'}>Your Transaction Reports</Text>
                     <HStack>
-                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://onlinedigitalsevakendra.in/Content/HomePage/images/logoslider/6.png' boxSize={16} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>AePS</Text>
                             <Link href={'/dashboard/reports/aeps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack> */}
-                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                        </VStack>
+                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='https://setu.co/_next/static/media/b_assured.8a87bea7.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>BBPS</Text>
                             <Link href={'/dashboard/reports/bbps?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
-                        </VStack> */}
-                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
-                            <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
-                            <Link href={'/dashboard/reports/dmt?pageId=reports'}>
-                                <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
-                            </Link>
-                        </VStack> */}
-                    </HStack>
-                    <HStack pt={8}>
-                        {/* <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
-                            <Image src='/mobile.png' boxSize={16} width={12} objectFit={'contain'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Recharge</Text>
-                            <Link href={'/dashboard/reports/recharge?pageId=reports'}>
-                                <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
-                            </Link>
-                        </VStack> */}
+                        </VStack>
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/money-transfer.png' boxSize={16} width={12} objectFit={'contain'} />
                             <Text fontSize={'xs'} textAlign={'center'}>DMT</Text>
@@ -488,9 +472,18 @@ const Index = () => {
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
                         </VStack>
+                    </HStack>
+                    <HStack pt={8}>
+                        <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
+                            <Image src='/mobile.png' boxSize={16} width={12} objectFit={'contain'} />
+                            <Text fontSize={'xs'} textAlign={'center'}>Recharge</Text>
+                            <Link href={'/dashboard/reports/recharge?pageId=reports'}>
+                                <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
+                            </Link>
+                        </VStack>
                         <VStack flex={1} p={2} rounded={8} bgColor={'#FFF'} boxShadow={'md'}>
                             <Image src='/payout.png' boxSize={16} w={12} objectFit={'contain'} />
-                            <Text fontSize={'xs'} textAlign={'center'}>Bigpay</Text>
+                            <Text fontSize={'xs'} textAlign={'center'}>Payout</Text>
                             <Link href={'/dashboard/reports/payout?pageId=reports'}>
                                 <Button colorScheme='whatsapp' size={'xs'} rounded={'full'}>View</Button>
                             </Link>
@@ -503,7 +496,7 @@ const Index = () => {
                             </Link>
                         </VStack>
                     </HStack>
-                    <Box mt={8} w={'full'} h={'36'} rounded={16} boxShadow={'lg'} overflow={'hidden'}>
+                    <Box mt={8} mb={4} w={'full'} h={'48'} rounded={16} boxShadow={'lg'} overflow={'hidden'}>
                         <Carousel autoPlay infiniteLoop showArrows={false} showStatus={false}>
                             {images.map((image, index) => (
                                 <div key={index}>
