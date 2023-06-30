@@ -255,7 +255,7 @@ const FundRequest = () => {
                 })
                 return
             }
-            window.open(`https://pesa24.in/${params.data.receipt}`, "_blank")
+            window.open(`https://flywid.in/${params.data.receipt}`, "_blank")
         }
         return (
             <HStack height={'full'} w={'full'} gap={4}>
