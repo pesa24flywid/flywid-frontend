@@ -603,7 +603,7 @@ const Aeps = () => {
       <HStack height={"full"} w={"full"} gap={4}>
         <Button
           rounded={"full"}
-          colorScheme="orange"
+          colorScheme="twitter"
           size={"xs"}
           onClick={() => showReceipt()}
         >
@@ -865,7 +865,7 @@ const Aeps = () => {
 
             <Button
               mt={4}
-              colorScheme={"orange"}
+              colorScheme={"twitter"}
               onClick={() => getMantra(rdservicePort)}
               isLoading={isBtnLoading}
             >
@@ -1033,7 +1033,7 @@ const Aeps = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

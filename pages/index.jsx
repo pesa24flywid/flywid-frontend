@@ -8,7 +8,7 @@ const Home = () => {
 
   return (
     <>
-      <Head><title>Janpay - Home</title></Head>
+      <Head><title>Pesa24 - Home</title></Head>
       Home
     </>
   )

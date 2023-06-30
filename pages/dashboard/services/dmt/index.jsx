@@ -797,7 +797,7 @@ const Dmt = () => {
                   />
                   <Button
                     type={"submit"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     isLoading={isBtnLoading}
                     onClick={(event) => checkSender(event)}
                   >
@@ -923,7 +923,7 @@ const Dmt = () => {
                 </FormControl>
               </Stack>
               <Button
-                colorScheme={"orange"}
+                colorScheme={"twitter"}
                 isLoading={isBtnLoading}
                 onClick={registrationFormik.handleSubmit}
               >
@@ -1090,7 +1090,7 @@ const Dmt = () => {
                                   w={["full", "fit-content"]}
                                   fontSize={["unset", "xs"]}
                                   rounded={["0", "full"]}
-                                  colorScheme={"orange"}
+                                  colorScheme={"twitter"}
                                   value={item.accountNumber}
                                   onClick={(e) =>
                                     handleRecipientSelection(e.target.value)
@@ -1123,7 +1123,7 @@ const Dmt = () => {
               </Stack>
               {isBtnHidden ? null : (
                 <Button
-                  colorScheme={"orange"}
+                  colorScheme={"twitter"}
                   isLoading={isBtnLoading}
                   onClick={() => setPaymentConfirmationModal(true)}
                 >
@@ -1413,7 +1413,7 @@ const Dmt = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

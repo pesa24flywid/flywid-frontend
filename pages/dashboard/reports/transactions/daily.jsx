@@ -18,6 +18,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  TableContainer,
+  Table,
+  Thead,
+  Tbody,
+  Tr, Th, Td,
+  
 } from "@chakra-ui/react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
@@ -216,7 +222,7 @@ const Index = () => {
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
     );
   };
@@ -300,7 +306,7 @@ const Index = () => {
           </FormControl>
         </HStack>
         <HStack justifyContent={'flex-end'}>
-          <Button colorScheme='orange' onClick={()=>{
+          <Button colorScheme='twitter' onClick={()=>{
             fetchTransactions(`/api/user/daily-sales?page=1&from=${from}&to=${to}`)
           }}>Search</Button>
         </HStack>
@@ -375,12 +381,12 @@ const Index = () => {
         <br />
         <TableContainer rounded={16}>
           <Table
-            colorScheme="orange"
+            colorScheme="twitter"
             variant={"striped"}
             ref={tableRef}
             id="printable-table"
           >
-            <Thead bgColor={"orange.500"} color={"#FFF"}>
+            <Thead bgColor={"twitter.500"} color={"#FFF"}>
               <Tr>
                 <Th color={"#FFF"} rowSpan={2}>
                   User Info
@@ -545,7 +551,7 @@ const Index = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

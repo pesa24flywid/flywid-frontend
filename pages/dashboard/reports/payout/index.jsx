@@ -212,7 +212,7 @@ const Index = () => {
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
     );
   };
@@ -269,7 +269,7 @@ const Index = () => {
             Export PDF
           </Button>
         </HStack>
-        <Box p={2} bg={"orange.500"} roundedTop={16}>
+        <Box p={2} bg={"twitter.500"} roundedTop={16}>
           <Text color={"#FFF"}>Search Transactions</Text>
         </Box>
         <Stack p={4} spacing={8} w={"full"} direction={["column", "row"]}>
@@ -293,7 +293,7 @@ const Index = () => {
           </FormControl>
         </Stack>
         <HStack mb={4} justifyContent={"flex-end"}>
-          <Button onClick={() => fetchTransactions()} colorScheme={"orange"}>
+          <Button onClick={() => fetchTransactions()} colorScheme={"twitter"}>
             Search
           </Button>
         </HStack>
@@ -305,7 +305,7 @@ const Index = () => {
           justifyContent={"center"}
         >
           <Button
-            colorScheme={'orange'}
+            colorScheme={'twitter'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.first_page_url)}
@@ -313,7 +313,7 @@ const Index = () => {
             <BsChevronDoubleLeft />
           </Button>
           <Button
-            colorScheme={'orange'}
+            colorScheme={'twitter'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.prev_page_url)}
@@ -321,12 +321,12 @@ const Index = () => {
             <BsChevronLeft />
           </Button>
           <Button
-            colorScheme={'orange'}
+            colorScheme={'twitter'}
             fontSize={12} size={'xs'}
             variant={'solid'}
           >{pagination.current_page}</Button>
           <Button
-            colorScheme={'orange'}
+            colorScheme={'twitter'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.next_page_url)}
@@ -334,7 +334,7 @@ const Index = () => {
             <BsChevronRight />
           </Button>
           <Button
-            colorScheme={'orange'}
+            colorScheme={'twitter'}
             fontSize={12} size={'xs'}
             variant={'outline'}
             onClick={() => fetchTransactions(pagination.last_page_url)}
@@ -394,7 +394,7 @@ const Index = () => {
                   receipt.status == "processed" || receipt?.status == true
                     ? "green.500"
                     : receipt.status == "processing" || receipt.status == "queued"
-                    ? "orange.500"
+                    ? "twitter.500"
                     : "red.500"
                 }
               >
@@ -477,7 +477,7 @@ const Index = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

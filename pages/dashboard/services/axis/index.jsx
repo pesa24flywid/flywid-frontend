@@ -76,7 +76,7 @@ const AxisAccount = () => {
           </Stack>
 
           <HStack justifyContent={"flex-end"} p={4}>
-            <Button colorScheme="orange" onClick={applyNow}>
+            <Button colorScheme="twitter" onClick={applyNow}>
               Apply Now
             </Button>
           </HStack>

@@ -57,7 +57,7 @@ const ResetPassword = () => {
     return (
         <>
             <Head>
-                <title>Janpay - Reset Password</title>
+                <title>Pesa24 - Reset Password</title>
             </Head>
             <Navbar />
 

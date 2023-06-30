@@ -35,7 +35,7 @@ import {
 import { useFormik } from "formik";
 import BackendAxios, { ClientAxios } from "../../../../lib/axios";
 import Pdf from "react-to-pdf";
-import { BsCheck2Circle, BsDownload, BsXCircle } from "react-icons/bs";
+import { BsCheck2Circle, BsClockHistory, BsDownload, BsXCircle } from "react-icons/bs";
 import Cookies from "js-cookie";
 
 const Payout = () => {
@@ -232,7 +232,7 @@ const Payout = () => {
                   />
                 </InputGroup>
               </FormControl>
-              <Button colorScheme={"orange"} onClick={onOpen}>
+              <Button colorScheme={"twitter"} onClick={onOpen}>
                 Done
               </Button>
             </Stack>
@@ -268,7 +268,7 @@ const Payout = () => {
                         <Td>
                           <Button
                             size={"xs"}
-                            colorScheme="orange"
+                            colorScheme="twitter"
                             rounded={"full"}
                             onClick={() =>
                               showReceipt({
@@ -376,7 +376,7 @@ const Payout = () => {
                   receipt.status == "processed" || receipt?.status == true
                     ? "green.500"
                     : receipt.status == "processing" || receipt.status == "queued"
-                    ? "orange.500"
+                    ? "twitter.500"
                     : "red.500"
                 }
               >
@@ -459,7 +459,7 @@ const Payout = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

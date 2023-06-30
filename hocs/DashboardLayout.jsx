@@ -159,7 +159,7 @@ const DashboardWrapper = (props) => {
 
     return (
         <>
-            <Head><title>{`Janpay - ${props.titleText || props.pageTitle}`}</title></Head>
+            <Head><title>{`Pesa24 - ${props.titleText || props.pageTitle}`}</title></Head>
 
             <Box
                 bg={'aliceblue'}

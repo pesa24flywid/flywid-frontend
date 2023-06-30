@@ -735,7 +735,7 @@ const Bbps = () => {
                     Fetch Bill
                   </Button>
                 ) : (
-                  <Button colorScheme={"orange"} onClick={onOpen}>
+                  <Button colorScheme={"twitter"} onClick={onOpen}>
                     Pay (₹{amount})
                   </Button>
                 )}
@@ -766,7 +766,7 @@ const Bbps = () => {
           <ModalFooter>
             <HStack justifyContent={"flex-end"} gap={6}>
               <Button onClick={onClose}>Cancel</Button>
-              <Button colorScheme="orange" onClick={(e) => payBill(e)}>
+              <Button colorScheme="twitter" onClick={(e) => payBill(e)}>
                 Submit
               </Button>
             </HStack>
@@ -862,7 +862,7 @@ const Bbps = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

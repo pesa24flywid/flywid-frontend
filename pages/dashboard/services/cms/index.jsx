@@ -186,7 +186,7 @@ const Cms = () => {
             <FormLabel>Transaction ID</FormLabel>
             <Input name="transactionId" onChange={Formik.handleChange} />
           </FormControl>
-          <Button colorScheme="orange" onClick={Formik.handleSubmit}>
+          <Button colorScheme="twitter" onClick={Formik.handleSubmit}>
             Submit
           </Button>
         </Box>
@@ -255,7 +255,7 @@ const Cms = () => {
                   <Button
                     rounded={"full"}
                     size={"sm"}
-                    colorScheme={"orange"}
+                    colorScheme={"twitter"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
                   >

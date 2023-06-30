@@ -317,7 +317,7 @@ const Bbps = () => {
           direction={['column', 'row']}
         >
           <VStack
-            w={['full', 'xs']} h={['sm', 'xl']}
+            w={['full', 'xs']} h={['32', 'xl']}
             overflowY={['scroll']}
             alignItems={['flex-start']}
             justifyContent={['flex-start']}

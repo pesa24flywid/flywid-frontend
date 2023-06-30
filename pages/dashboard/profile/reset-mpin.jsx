@@ -150,7 +150,7 @@ const ResetMpin = () => {
                   </PinInput>
                 </HStack>
               </FormControl>
-              <Button colorScheme={"orange"} onClick={sendOtp}>
+              <Button colorScheme={"twitter"} onClick={sendOtp}>
                 Done
               </Button>
             </VStack>
