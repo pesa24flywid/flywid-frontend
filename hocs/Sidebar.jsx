@@ -76,12 +76,12 @@ export const SidebarOptions =
       title: 'services',
       icon: <BiRupee />,
       children: [
-        {
-          title: 'Activate services',
-          link: '/dashboard/services/activate?pageId=services',
-          id: "basicServiceActivate",
-          soon: false,
-        },
+        // {
+        //   title: 'Activate services',
+        //   link: '/dashboard/services/activate?pageId=services',
+        //   id: "basicServiceActivate",
+        //   soon: false,
+        // },
         {
           title: 'AePS services',
           link: '/dashboard/services/aeps?pageId=services',
@@ -118,36 +118,36 @@ export const SidebarOptions =
           id: "payoutTransaction",
           soon: false,
         },
-        {
-          title: 'axis bank account',
-          link: '/dashboard/services/axis?pageId=services',
-          id: "axisTransaction",
-          soon: false,
-        },
-        {
-          title: 'LIC services',
-          link: '/dashboard/services/lic?pageId=services',
-          id: "licTransaction",
-          soon: false,
-        },
-        {
-          title: 'PAN services',
-          link: '/dashboard/services/pan?pageId=services',
-          id: "panTransaction",
-          soon: false,
-        },
-        {
-          title: 'CMS services',
-          link: '/dashboard/services/cms?pageId=services',
-          id: "cmsTransaction",
-          soon: false,
-        },
-        {
-          title: 'Fastag',
-          link: '/dashboard/services/fastag?pageId=services',
-          id: "fastagTransaction",
-          soon: false,
-        },
+        // {
+        //   title: 'axis bank account',
+        //   link: '/dashboard/services/axis?pageId=services',
+        //   id: "axisTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'LIC services',
+        //   link: '/dashboard/services/lic?pageId=services',
+        //   id: "licTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'PAN services',
+        //   link: '/dashboard/services/pan?pageId=services',
+        //   id: "panTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'CMS services',
+        //   link: '/dashboard/services/cms?pageId=services',
+        //   id: "cmsTransaction",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'Fastag',
+        //   link: '/dashboard/services/fastag?pageId=services',
+        //   id: "fastagTransaction",
+        //   soon: false,
+        // },
       ]
     },
     {
@@ -213,36 +213,36 @@ export const SidebarOptions =
           id: "fundRequests",
           soon: false,
         },
-        {
-          title: 'LIC reports',
-          link: '/dashboard/reports/lic?pageId=reports',
-          id: "licReport",
-          soon: false,
-        },
-        {
-          title: 'PAN reports',
-          link: '/dashboard/reports/pan?pageId=reports',
-          id: "panReport",
-          soon: false,
-        },
-        {
-          title: 'CMS reports',
-          link: '/dashboard/reports/cms?pageId=reports',
-          id: "cmsReport",
-          soon: false,
-        },
+        // {
+        //   title: 'LIC reports',
+        //   link: '/dashboard/reports/lic?pageId=reports',
+        //   id: "licReport",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'PAN reports',
+        //   link: '/dashboard/reports/pan?pageId=reports',
+        //   id: "panReport",
+        //   soon: false,
+        // },
+        // {
+        //   title: 'CMS reports',
+        //   link: '/dashboard/reports/cms?pageId=reports',
+        //   id: "cmsReport",
+        //   soon: false,
+        // },
         // {
         //   title: 'axis accounts',
         //   link: '/dashboard/reports/axis?pageId=reports',
         //   id: "axisReport",
         //   soon: true,
         // },
-        {
-          title: 'fastag reports',
-          link: '/dashboard/reports/fastag?pageId=reports',
-          id: "fastagReport",
-          soon: false,
-        },
+        // {
+        //   title: 'fastag reports',
+        //   link: '/dashboard/reports/fastag?pageId=reports',
+        //   id: "fastagReport",
+        //   soon: false,
+        // },
         {
           title: 'Transaction Ledger',
           link: '/dashboard/reports/transactions/ledger?pageId=reports',

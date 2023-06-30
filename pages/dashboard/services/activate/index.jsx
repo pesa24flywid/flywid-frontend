@@ -118,7 +118,7 @@ const Activate = () => {
                     }
                 </Flex>
 
-                <Text py={4}>Server 2 Services</Text>
+                {/* <Text py={4}>Server 2 Services</Text>
                 <Flex direction={'row'} gap={4} flexWrap={'wrap'} pb={8}>
                     {
                         services.filter(service => (service.eko_id && Number(service.eko_id) != 0)).map((service, key) => {
@@ -151,7 +151,7 @@ const Activate = () => {
                             )
                         })
                     }
-                </Flex>
+                </Flex> */}
 
             </DashboardWrapper>
         </>

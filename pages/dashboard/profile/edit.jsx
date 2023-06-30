@@ -638,7 +638,7 @@ const EditProfile = () => {
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
                   }
                 </Box>
-                <Box>
+                {/* <Box>
                   <Link href={'/dashboard/eko/onboard?pageId=dashboard'}>
                     <Button
                       colorScheme="whatsapp"
@@ -651,7 +651,7 @@ const EditProfile = () => {
                   {isProfileComplete ||
                     <Text fontSize={'xs'} color={'darkslategray'}>Save your details first</Text>
                   }
-                </Box>
+                </Box> */}
               </Stack>
             </VStack>
 
