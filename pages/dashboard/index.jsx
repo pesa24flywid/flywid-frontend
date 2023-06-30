@@ -210,7 +210,7 @@ const Dashboard = () => {
           />
         </Stack>
 
-        <Stack
+        {/* <Stack
           direction={['column', 'row']}
           py={2} spacing={4}
         >
@@ -235,18 +235,18 @@ const Dashboard = () => {
             amount={cmsData?.debit - cmsData?.credit}
           />
 
-        </Stack>
+        </Stack> */}
 
         <Stack
           direction={['column', 'row']}
           py={2} spacing={4}
         >
-          <TransactionCard
+          {/* <TransactionCard
             color={'#13005A'}
             title={"Fastag"}
             quantity={fastagData?.count}
             amount={fastagData?.debit - fastagData?.credit}
-          />
+          /> */}
 
           <TransactionCard
             color={'#26845A'}
