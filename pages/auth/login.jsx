@@ -330,7 +330,7 @@ const Login = () => {
     return (
         <>
             <Head>
-                <title>Pesa24</title>
+                <title>Flywid</title>
             </Head>
             <Navbar />
             {
