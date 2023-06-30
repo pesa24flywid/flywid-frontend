@@ -61,7 +61,7 @@ const DashboardWrapper = (props) => {
             setUserName(localStorage.getItem("userName"))
             setUserType(localStorage.getItem("userType"))
             setProfilePic(localStorage.getItem("profilePic"))
-            Cookies.set("verified", Cookies.get("verified"), { expires: sessionExpiry })
+            Cookies.set("verified", Cookies.get("verified"))
         }
     }, [])
 
@@ -96,7 +96,7 @@ const DashboardWrapper = (props) => {
     const [ekoId, setEkoId] = useState("")
 
     const { isOpen, onOpen, onClose } = useDisclosure()
-    var sessionExpiry = new Date(new Date().getTime() + 2 * 60 * 60 * 1000)
+    var sessionExpiry = new Date(new Date().getTime() + 12 * 60 * 60 * 1000)
     const Router = useRouter()
 
     useEffect(() => {

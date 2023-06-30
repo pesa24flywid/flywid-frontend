@@ -36,12 +36,13 @@ import Swiper from 'swiper';
 import 'swiper/swiper-bundle.css';
 import Register from './register'
 import Loader from '../../hocs/Loader'
-import BackendAxios from '../../lib/axios'
+import BackendAxios, { FormAxios } from '../../lib/axios'
 var bcrypt = require('bcryptjs')
 
 const Login = () => {
     const Router = useRouter()
     const Toast = useToast({ position: 'top-right' })
+    var sessionExpiry = new Date(new Date().getTime() + 10 * 60 * 60 * 1000)
 
     const [currentSlide, setCurrentSlide] = useState("login")
     const settings = {
@@ -228,7 +229,7 @@ const Login = () => {
                 },
             }).then(async (res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
-                Cookies.set("verified", hashedValue)
+                Cookies.set("verified", hashedValue, { expires: sessionExpiry })
                 localStorage.setItem("userId", res.data.id)
                 Cookies.set("userId", res.data.id)
                 localStorage.setItem("userName", res.data.name)
@@ -237,8 +238,9 @@ const Login = () => {
                 localStorage.setItem("balance", res.data.wallet)
                 localStorage.setItem("profilePic", `${process.env.NEXT_PUBLIC_BACKEND_URL}/storage/${res.data.profile_pic}`)
 
-                Cookies.set('access-token', res.data.token.original.access_token)
+                Cookies.set('access-token', res.data.token.original.access_token, { expires: sessionExpiry })
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
+                FormAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
 
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
@@ -291,7 +293,7 @@ const Login = () => {
                 },
             }).then(async (res) => {
                 var hashedValue = bcrypt.hashSync(`${res.data.id + res.data.name}`, 2)
-                Cookies.set("verified", hashedValue)
+                Cookies.set("verified", hashedValue, { expires: sessionExpiry })
                 localStorage.setItem("userId", res.data.id)
                 Cookies.set("userId", res.data.id)
                 localStorage.setItem("userName", res.data.name)
@@ -303,8 +305,9 @@ const Login = () => {
                 localStorage.setItem("ekoId", res.data.eko_id)
                 localStorage.setItem("paysprintId", res.data.paysprint_id)
 
-                Cookies.set('access-token', res.data.token.original.access_token)
+                Cookies.set('access-token', res.data.token.original.access_token, { expires: sessionExpiry })
                 BackendAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
+                FormAxios.defaults.headers.common['Authorization'] = `Bearer ${res.data?.token?.original?.access_token}`
                 if (res.data.profile_complete == 0) localStorage.setItem("isProfileComplete", false)
                 if (res.data.profile_complete == 1) localStorage.setItem("isProfileComplete", true)
                 setIsLoading(false)

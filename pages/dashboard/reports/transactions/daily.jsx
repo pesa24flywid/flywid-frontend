@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import DashboardWrapper from '../../../../hocs/DashboardLayout'
+import React, { useEffect, useState } from "react";
+import DashboardWrapper from "../../../../hocs/DashboardLayout";
 import {
   useToast,
   Box,
@@ -17,11 +17,11 @@ import {
   VisuallyHidden,
   FormControl,
   FormLabel,
-  Input
-} from '@chakra-ui/react'
-import { AgGridReact } from 'ag-grid-react'
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+  Input,
+} from "@chakra-ui/react";
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import {
   BsCheck2Circle,
   BsChevronDoubleLeft,
@@ -39,17 +39,19 @@ import 'jspdf-autotable'
 import { toBlob } from 'html-to-image'
 
 const ExportPDF = () => {
-  const doc = new jsPDF('landscape')
+  const doc = new jsPDF("landscape");
 
-  doc.autoTable({ html: '#printable-table' })
-  doc.output('dataurlnewwindow');
-}
+  doc.autoTable({ html: "#printable-table" });
+  doc.output("dataurlnewwindow");
+};
 
 const Index = () => {
   const Toast = useToast({
-    position: 'top-right'
-  })
-  const [printableRow, setPrintableRow] = useState([])
+    position: "top-right",
+  });
+  const [userName, setUserName] = useState("");
+  const [userId, setUserId] = useState("");
+  const [printableRow, setPrintableRow] = useState([]);
   const [pagination, setPagination] = useState({
     current_page: "1",
     total_pages: "1",
@@ -57,199 +59,252 @@ const Index = () => {
     last_page_url: "",
     next_page_url: "",
     prev_page_url: "",
-  })
-  const [rowData, setRowData] = useState([
-
-  ])
+  });
+  const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([
     {
       headerName: "Trnxn ID",
-      field: 'transaction_id',
-      width: 150
+      field: "transaction_id",
+      width: 150,
     },
     {
       headerName: "Debit",
-      field: 'debit_amount',
-      cellRenderer: 'debitCellRenderer',
-      width: 150
+      field: "debit_amount",
+      cellRenderer: "debitCellRenderer",
+      width: 150,
     },
     {
       headerName: "Credit",
-      field: 'credit_amount',
-      cellRenderer: 'creditCellRenderer',
-      width: 150
+      field: "credit_amount",
+      cellRenderer: "creditCellRenderer",
+      width: 150,
     },
     {
       headerName: "Opening Balance",
-      field: 'opening_balance',
-      width: 150
+      field: "opening_balance",
+      width: 150,
     },
     {
       headerName: "Closing Balance",
-      field: 'closing_balance',
-      width: 150
+      field: "closing_balance",
+      width: 150,
     },
     {
       headerName: "Trnxn Type",
-      field: 'service_type',
-      width: 100
+      field: "service_type",
+      width: 100,
     },
     {
       headerName: "Trnxn Status",
-      field: 'status',
-      cellRenderer: 'statusCellRenderer',
-      width: 100
+      field: "status",
+      cellRenderer: "statusCellRenderer",
+      width: 100,
     },
     {
       headerName: "Created At",
-      field: 'created_at',
-      width: 150
+      field: "created_at",
+      width: 150,
     },
     {
       headerName: "Updated At",
-      field: 'updated_at',
-      width: 150
+      field: "updated_at",
+      width: 150,
     },
     {
       headerName: "Additional Info",
-      field: 'metadata',
-      hide: true
+      field: "metadata",
+      hide: true,
     },
     {
       headerName: "Receipt",
       field: "receipt",
-      pinned: 'right',
-      cellRenderer: 'receiptCellRenderer',
-      width: 80
-    }
-  ])
-
-  const [from, setFrom] = useState(null)
-  const [to, setTo] = useState(null)
+      pinned: "right",
+      cellRenderer: "receiptCellRenderer",
+      width: 80,
+    },
+  ]);
+  const [overviewData, setOverviewData] = useState([]);
+  const [from, setFrom] = useState(null);
+  const [to, setTo] = useState(null);
 
   const handleShare = async () => {
-    const myFile = await toBlob(pdfRef.current, {quality: 0.95})
+    const myFile = await toBlob(pdfRef.current, { quality: 0.95 });
     const data = {
       files: [
-        new File([myFile], 'receipt.jpeg', {
-          type: myFile.type
-        })
+        new File([myFile], "receipt.jpeg", {
+          type: myFile.type,
+        }),
       ],
-      title: 'Receipt',
-      text: 'Receipt'
-    }
+      title: "Receipt",
+      text: "Receipt",
+    };
     try {
-      await navigator.share(data)
+      await navigator.share(data);
     } catch (error) {
-      console.error('Error sharing:', error?.toString());
+      console.error("Error sharing:", error?.toString());
       Toast({
-        status: 'warning',
-        description: error?.toString()
-      })
+        status: "warning",
+        description: error?.toString(),
+      });
     }
   };
 
+  function fetchSum() {
+    // Fetch transactions overview
+    BackendAxios.get(`/api/user/overview?from=${from}&to=${to}`)
+      .then((res) => {
+        setOverviewData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function fetchTransactions(pageLink) {
-    BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`).then((res) => {
-      setPagination({
-        current_page: res.data.current_page,
-        total_pages: parseInt(res.data.last_page),
-        first_page_url: res.data.first_page_url,
-        last_page_url: res.data.last_page_url,
-        next_page_url: res.data.next_page_url,
-        prev_page_url: res.data.prev_page_url,
+    BackendAxios.get(pageLink || `/api/user/daily-sales?page=1`)
+      .then((res) => {
+        setPagination({
+          current_page: res.data.current_page,
+          total_pages: parseInt(res.data.last_page),
+          first_page_url: res.data.first_page_url,
+          last_page_url: res.data.last_page_url,
+          next_page_url: res.data.next_page_url,
+          prev_page_url: res.data.prev_page_url,
+        });
+        setPrintableRow(res?.data?.data);
+        setRowData(res?.data?.data);
+        fetchSum();
       })
-      setPrintableRow(res?.data?.data)
-      setRowData(res?.data?.data)
-    }).catch((err) => {
-      console.log(err)
-      Toast({
-        status: 'error',
-        description: err.response.data.message || err.response.data || err.message
-      })
-    })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+        console.log(err);
+        Toast({
+          status: "error",
+          description:
+            err.response.data.message || err.response.data || err.message,
+        });
+      });
   }
 
   useEffect(() => {
-    fetchTransactions()
-  }, [])
+    fetchTransactions();
+  }, []);
 
-  const pdfRef = React.createRef()
+  const pdfRef = React.createRef();
   const [receipt, setReceipt] = useState({
     show: false,
     status: "success",
-    data: {}
-  })
+    data: {},
+  });
   const receiptCellRenderer = (params) => {
     function showReceipt() {
       if (!params.data.metadata) {
         Toast({
-          description: 'No Receipt Available'
-        })
-        return
+          description: "No Receipt Available",
+        });
+        return;
       }
       setReceipt({
         status: JSON.parse(params.data.metadata).status,
         show: true,
-        data: JSON.parse(params.data.metadata)
-      })
+        data: JSON.parse(params.data.metadata),
+      });
     }
     return (
       <HStack height={'full'} w={'full'} gap={4}>
-        <Button rounded={'full'} colorScheme='twitter' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
+        <Button rounded={'full'} colorScheme='orange' size={'xs'} onClick={() => showReceipt()}><BsEye /></Button>
       </HStack>
-    )
-  }
+    );
+  };
 
   const creditCellRenderer = (params) => {
     return (
-      <Text px={1} flex={'unset'} w={'fit-content'} fontWeight={'semibold'} color={params.value > 0 && "green.400"}>
+      <Text
+        px={1}
+        flex={"unset"}
+        w={"fit-content"}
+        fontWeight={"semibold"}
+        color={params.value > 0 && "green.400"}
+      >
         {params.value}
       </Text>
-    )
-  }
+    );
+  };
 
   const debitCellRenderer = (params) => {
     return (
-      <Text px={1} flex={'unset'} w={'fit-content'} fontWeight={'semibold'} color={params.value > 0 && "red.400"}>
+      <Text
+        px={1}
+        flex={"unset"}
+        w={"fit-content"}
+        fontWeight={"semibold"}
+        color={params.value > 0 && "red.400"}
+      >
         {params.value}
       </Text>
-    )
-  }
+    );
+  };
 
   const statusCellRenderer = (params) => {
     return (
       <>
-        {
-          JSON.parse(params.data.metadata).status ?
-            <Text color={'green'} fontWeight={'bold'}>SUCCESS</Text> : <Text color={'red'} fontWeight={'bold'}>FAILED</Text>
-        }
+        {JSON.parse(params.data.metadata).status ? (
+          <Text color={"green"} fontWeight={"bold"}>
+            SUCCESS
+          </Text>
+        ) : (
+          <Text color={"red"} fontWeight={"bold"}>
+            FAILED
+          </Text>
+        )}
       </>
-    )
-  }
+    );
+  };
+
+  const tableRef = React.useRef(null);
+  useEffect(() => {
+    setUserId(localStorage.getItem("userId"));
+    setUserName(localStorage.getItem("userName"));
+  }, []);
 
   return (
     <>
-      <DashboardWrapper pageTitle={'Daily Sales'}>
+      <DashboardWrapper pageTitle={"Daily Sales"}>
         <HStack>
-          <Button onClick={ExportPDF} colorScheme={'red'} size={'sm'}>Export PDF</Button>
+          <Button onClick={ExportPDF} colorScheme={"red"} size={"sm"}>
+            Export PDF
+          </Button>
         </HStack>
-        <HStack justifyContent={'flex-start'} py={4}>
-          <FormControl w={['full', 'xs']}>
+        <HStack justifyContent={"flex-start"} py={4}>
+          <FormControl w={["full", "xs"]}>
             <FormLabel>From</FormLabel>
-            <Input type='date' bgColor={'#FFF'} name='from' onChange={e => setFrom(e.target.value)} />
+            <Input
+              type="date"
+              bgColor={"#FFF"}
+              name="from"
+              onChange={(e) => setFrom(e.target.value)}
+            />
           </FormControl>
-          <FormControl w={['full', 'xs']}>
+          <FormControl w={["full", "xs"]}>
             <FormLabel>To</FormLabel>
-            <Input type='date' bgColor={'#FFF'} name='to' onChange={e => setTo(e.target.value)} />
+            <Input
+              type="date"
+              bgColor={"#FFF"}
+              name="to"
+              onChange={(e) => setTo(e.target.value)}
+            />
           </FormControl>
         </HStack>
         <HStack justifyContent={'flex-end'}>
-          <Button colorScheme='twitter' onClick={()=>{
+          <Button colorScheme='orange' onClick={()=>{
             fetchTransactions(`/api/user/daily-sales?page=1&from=${from}&to=${to}`)
           }}>Search</Button>
         </HStack>
-        <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
+        {/* <HStack spacing={2} py={4} mt={24} bg={'white'} justifyContent={'center'}>
           <Button
             colorScheme={'twitter'}
             fontSize={12} size={'xs'}
@@ -315,11 +370,95 @@ const Index = () => {
 
             </AgGridReact>
           </Box>
-        </Box>
+        </Box> */}
+        <br />
+        <br />
+        <TableContainer rounded={16}>
+          <Table
+            colorScheme="orange"
+            variant={"striped"}
+            ref={tableRef}
+            id="printable-table"
+          >
+            <Thead bgColor={"orange.500"} color={"#FFF"}>
+              <Tr>
+                <Th color={"#FFF"} rowSpan={2}>
+                  User Info
+                </Th>
+                {/* <Th color={"#FFF"} rowSpan={2}>
+                  Wallet Balance
+                </Th> */}
+                <Th color={"#FFF"} colSpan={4} textAlign={"center"}>
+                  Transactions
+                </Th>
+              </Tr>
+              <Tr>
+                <Th color={"#FFF"}>Payout</Th>
+                <Th color={"#FFF"}>Charge</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                <Td>
+                  <Box>
+                    <Text fontSize={"lg"} fontWeight={"semibold"}>
+                      ({userId}) - {userName}
+                    </Text>
+                  </Box>
+                </Td>
+                {/* <Td>₹ {item?.userWallet || 0}</Td> */}
+                <Td>
+                  {Math.abs(
+                    overviewData[4]?.["payout"]?.credit -
+                      overviewData[4]?.["payout"]?.debit
+                  ) || 0}
+                </Td>
+                <Td>
+                  {Math.abs(
+                    overviewData[4]?.["payout-commission"]?.credit -
+                      overviewData[4]?.["payout-commission"]?.debit
+                  ) || 0}
+                </Td>
+              </Tr>
+              <Tr>
+                <Td>
+                  <Text
+                    textAlign={"right"}
+                    fontWeight={"semibold"}
+                    fontSize={"lg"}
+                  >
+                    TOTAL
+                  </Text>
+                </Td>
+                <Td>
+                  <Text
+                    textAlign={"left"}
+                    fontWeight={"semibold"}
+                    fontSize={"lg"}
+                  >
+                    {Math.abs(
+                      overviewData[4]?.["payout"]?.credit -
+                        overviewData[4]?.["payout"]?.debit
+                    ) || 0}
+                  </Text>
+                </Td>
+                <Td>
+                  <Text
+                    textAlign={"left"}
+                    fontWeight={"semibold"}
+                    fontSize={"lg"}
+                  >
+                    {Math.abs(
+                      overviewData[4]?.["payout-commission"]?.credit -
+                        overviewData[4]?.["payout-commission"]?.debit
+                    ) || 0}
+                  </Text>
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
+        </TableContainer>
       </DashboardWrapper>
-
-
-
 
       {/* Receipt */}
       <Modal
@@ -327,25 +466,35 @@ const Index = () => {
         onClose={() => setReceipt({ ...receipt, show: false })}
       >
         <ModalOverlay />
-        <ModalContent width={'xs'}>
-          <Box ref={pdfRef} style={{ border: '1px solid #999' }}>
+        <ModalContent width={"xs"}>
+          <Box ref={pdfRef} style={{ border: "1px solid #999" }}>
             <ModalHeader p={0}>
-              <VStack w={'full'} p={8} bg={receipt.status ? "green.500" : "red.500"}>
-                {
-                  receipt.status ?
-                    <BsCheck2Circle color='#FFF' fontSize={72} /> :
-                    <BsXCircle color='#FFF' fontSize={72} />
-                }
-                <Text color={'#FFF'} textTransform={'capitalize'}>₹ {receipt.data.amount || 0}</Text>
-                <Text color={'#FFF'} fontSize={'sm'} textTransform={'uppercase'}>TRANSACTION {receipt.status ? "success" : "failed"}</Text>
+              <VStack
+                w={"full"}
+                p={8}
+                bg={receipt.status ? "green.500" : "red.500"}
+              >
+                {receipt.status ? (
+                  <BsCheck2Circle color="#FFF" fontSize={72} />
+                ) : (
+                  <BsXCircle color="#FFF" fontSize={72} />
+                )}
+                <Text color={"#FFF"} textTransform={"capitalize"}>
+                  ₹ {receipt.data.amount || 0}
+                </Text>
+                <Text
+                  color={"#FFF"}
+                  fontSize={"sm"}
+                  textTransform={"uppercase"}
+                >
+                  TRANSACTION {receipt.status ? "success" : "failed"}
+                </Text>
               </VStack>
             </ModalHeader>
-            <ModalBody p={0} bg={'azure'}>
-              <VStack w={'full'} spacing={0} p={4} bg={'#FFF'}>
-                {
-                  receipt.data ?
-                    Object.entries(receipt.data).map((item, key) => {
-
+            <ModalBody p={0} bg={"azure"}>
+              <VStack w={"full"} spacing={0} p={4} bg={"#FFF"}>
+                {receipt.data
+                  ? Object.entries(receipt.data).map((item, key) => {
                       if (
                         item[0].toLowerCase() != "status" &&
                         item[0].toLowerCase() != "user" &&
@@ -355,52 +504,61 @@ const Index = () => {
                       )
                         return (
                           <HStack
-                            justifyContent={'space-between'}
-                            gap={8} pb={1} w={'full'} key={key}
-                            borderWidth={'0.75px'} p={2}
+                            justifyContent={"space-between"}
+                            gap={8}
+                            pb={1}
+                            w={"full"}
+                            key={key}
+                            borderWidth={"0.75px"}
+                            p={2}
                           >
                             <Text
-                              fontSize={'xs'}
-                              fontWeight={'medium'}
-                              textTransform={'capitalize'}
-                            >{item[0].replace(/_/g, " ")}</Text>
-                            <Text fontSize={'xs'} maxW={'full'} >{`${item[1]}`}</Text>
+                              fontSize={"xs"}
+                              fontWeight={"medium"}
+                              textTransform={"capitalize"}
+                            >
+                              {item[0].replace(/_/g, " ")}
+                            </Text>
+                            <Text
+                              fontSize={"xs"}
+                              maxW={"full"}
+                            >{`${item[1]}`}</Text>
                           </HStack>
-                        )
-
-                    }
-                    ) : null
-                }
-
+                        );
+                    })
+                  : null}
               </VStack>
             </ModalBody>
           </Box>
           <ModalFooter>
-            <HStack justifyContent={'center'} gap={4}>
+            <HStack justifyContent={"center"} gap={4}>
               <Button
-                colorScheme='yellow'
-                size={'sm'} rounded={'full'}
+                colorScheme="yellow"
+                size={"sm"}
+                rounded={"full"}
                 onClick={handleShare}
-              >Share</Button>
+              >
+                Share
+              </Button>
               <Pdf targetRef={pdfRef} filename="Receipt.pdf">
-                {
-                  ({ toPdf }) => <Button
-                    rounded={'full'}
-                    size={'sm'}
-                    colorScheme={'twitter'}
+                {({ toPdf }) => (
+                  <Button
+                    rounded={"full"}
+                    size={"sm"}
+                    colorScheme={"orange"}
                     leftIcon={<BsDownload />}
                     onClick={toPdf}
-                  >Download
+                  >
+                    Download
                   </Button>
-                }
+                )}
               </Pdf>
             </HStack>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
-
-      <VisuallyHidden>
+      {/* <VisuallyHidden>
         <table id='printable-table'>
           <thead>
             <tr>
@@ -445,9 +603,9 @@ const Index = () => {
             }
           </tbody>
         </table>
-      </VisuallyHidden>
+      </VisuallyHidden> */}
     </>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

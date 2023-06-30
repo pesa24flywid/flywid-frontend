@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import DashboardWrapper from '../../../hocs/DashboardLayout'
+import React, { useState, useEffect } from "react";
+import DashboardWrapper from "../../../hocs/DashboardLayout";
 import {
     Box,
     Button,
@@ -28,40 +28,57 @@ import { GoMortarBoard } from 'react-icons/go'
 import { FiMonitor } from 'react-icons/fi'
 
 const Index = () => {
-    const Toast = useToast({ position: 'top-right' })
-    const [isLoading, setIsLoading] = useState(false)
-    const images = [
-        'https://cdn.corporatefinanceinstitute.com/assets/online-payment-companies-1024x683.jpeg',
-        'https://images.gizbot.com/fit-in/img/600x338/2020/11/ds4-1605688425.jpg',
-        'https://sbnri.com/blog/wp-content/uploads/2022/09/Bharat-Bill-Payment-1.jpg',
-        // Add more image URLs as needed
-    ];
-    const [aepsData, setAepsData] = useState({ count: 0, debit: 0, credit: 0 })
-    const [bbpsData, setBbpsData] = useState({ count: 0, debit: 0, credit: 0 })
-    const [dmtData, setDmtData] = useState({ count: 0, debit: 0, credit: 0 })
-    const [rechargeData, setRechargeData] = useState({ count: 0, debit: 0, credit: 0 })
-    const [payoutData, setPayoutData] = useState({ count: 0, debit: 0, credit: 0 })
-    const [bbpsProvider, setBbpsProvider] = useState("")
-    const [categories, setCategories] = useState([])
+  const Toast = useToast({ position: "top-right" });
+  const [isLoading, setIsLoading] = useState(false);
+  const images = [
+    "https://cdn.corporatefinanceinstitute.com/assets/online-payment-companies-1024x683.jpeg",
+    "https://images.gizbot.com/fit-in/img/600x338/2020/11/ds4-1605688425.jpg",
+    "https://sbnri.com/blog/wp-content/uploads/2022/09/Bharat-Bill-Payment-1.jpg",
+    // Add more image URLs as needed
+  ];
+  const [aepsData, setAepsData] = useState({ count: 0, debit: 0, credit: 0 });
+  const [bbpsData, setBbpsData] = useState({ count: 0, debit: 0, credit: 0 });
+  const [dmtData, setDmtData] = useState({ count: 0, debit: 0, credit: 0 });
+  const [rechargeData, setRechargeData] = useState({
+    count: 0,
+    debit: 0,
+    credit: 0,
+  });
+  const [payoutData, setPayoutData] = useState({
+    count: 0,
+    debit: 0,
+    credit: 0,
+  });
+  const [bbpsProvider, setBbpsProvider] = useState("");
+  const [categories, setCategories] = useState([]);
 
+  useEffect(() => {
+    setIsLoading(true);
+    BackendAxios.get("/api/user/overview?tenure=today")
+      .then((res) => {
+        setAepsData(res.data[0].aeps);
+        setBbpsData(res.data[1].bbps);
+        setDmtData(res.data[2].dmt);
+        setRechargeData(res.data[8].recharge);
+        setPayoutData(res.data[4].payout);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401) {
+          Cookies.remove("verified");
+          window.location.reload();
+          return;
+        }
+      });
 
-    useEffect(() => {
-        setIsLoading(true)
-        BackendAxios.get('/api/user/overview?tenure=today').then(res => {
-            setAepsData(res.data[0].aeps)
-            setBbpsData(res.data[1].bbps)
-            setDmtData(res.data[2].dmt)
-            setRechargeData(res.data[8].recharge)
-            setPayoutData(res.data[4].payout)
-            setIsLoading(false)
-        })
-
-        ClientAxios.get(`/api/global`).then(res => {
-            setBbpsProvider(res.data[0]?.bbps_provider)
-        }).catch(err => {
-            console.log(err)
-        })
-    }, [])
+    ClientAxios.get(`/api/global`)
+      .then((res) => {
+        setBbpsProvider(res.data[0]?.bbps_provider);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
     return (
         <>
@@ -137,17 +154,24 @@ const Index = () => {
                         </Stack>
                     </HStack>
 
-
-                    <Box
-                        width={'100%'}
-                        rounded={16}
-                        boxShadow={'lg'}
-                        p={4} marginTop={8}
-                        bgImage={'/mobileBg.svg'}
-                        bgSize={'cover'}
-                        bgRepeat={'no-repeat'}
-                    >
-                        <Text color={'#FFF'} mb={[8]} fontWeight={'semibold'} fontSize={'md'}>Explore Our Services</Text>
+          <Box
+            width={"100%"}
+            rounded={16}
+            boxShadow={"lg"}
+            p={4}
+            marginTop={8}
+            bgImage={"/mobileBg.svg"}
+            bgSize={"cover"}
+            bgRepeat={"no-repeat"}
+          >
+            <Text
+              color={"#FFF"}
+              mb={[8]}
+              fontWeight={"semibold"}
+              fontSize={"md"}
+            >
+              Explore Our Services
+            </Text>
 
                         <HStack justifyContent={'flex-start'} gap={[4, 8]} flexWrap={'wrap'}>
 
@@ -219,25 +243,33 @@ const Index = () => {
                                 </Link>
                             </Box>
 
-                            <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
-                                <Link
-                                    href={'/dashboard/services/dmt?pageId=services'}
-                                    style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '8px'
-                                    }}
-                                >
-                                    <Icon fontSize={36} as={FaRegMoneyBillAlt} color={'#FFF'} />
-                                    <Text
-                                        textAlign={'center'}
-                                        color={'#FFF'}
-                                        fontSize={['sm', 'md']}
-                                    >DMT</Text>
-                                </Link>
-                            </Box>
+              <Box
+                w={["27.5%", "20%"]}
+                p={4}
+                _hover={{ bgColor: "rgba(0,0,0,0.2)" }}
+                rounded={"full"}
+                transition={"all .3s ease"}
+              >
+                <Link
+                  href={"/dashboard/services/dmt?pageId=services"}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <Icon fontSize={36} as={FaRegMoneyBillAlt} color={"#FFF"} />
+                  <Text
+                    textAlign={"center"}
+                    color={"#FFF"}
+                    fontSize={["sm", "md"]}
+                  >
+                    DMT
+                  </Text>
+                </Link>
+              </Box>
 
                             <Box w={['27.5%', '20%']} p={4} _hover={{ bgColor: 'rgba(0,0,0,0.2)' }} rounded={'full'} transition={'all .3s ease'}>
                                 <Link
@@ -510,5 +542,3 @@ const Index = () => {
         </>
     )
 }
-
-export default Index
