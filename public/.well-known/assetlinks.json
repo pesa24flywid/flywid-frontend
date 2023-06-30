@@ -1,6 +1,11 @@
-[{
+[
+      {
         "relation": ["delegate_permission/common.handle_all_urls"],
-        "target" : { "namespace": "android_app", "package_name": "in.pesa24.pesa24",
-                     "sha256_cert_fingerprints": ["43:0B:68:5C:70:B3:6E:F0:85:E4:00:52:EF:57:DD:A8:F2:62:F3:67:BF:E9:99:3D:5A:33:8A:6D:70:6F:31:47"] }
+        "target": {
+          "namespace": "android_app",
+          "package_name": "in.pesa24.pesa24",
+          "sha256_cert_fingerprints":
+            ["CC:F0:09:F2:96:47:C9:87:76:D0:58:C6:06:F3:47:48:83:86:F5:61:0E:A5:DF:06:51:25:32:01:32:D7:8D:B2"]
+        }
       }
-]
+    ]
