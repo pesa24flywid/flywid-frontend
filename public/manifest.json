@@ -9,7 +9,7 @@
   "short_name": "Pesa24",
   "start_url": "/",
   "theme_color": "#ff0000",
-  "categories": [],
+  "categories": ["payments"],
   "screenshots": [],
   "icons": [
     {
